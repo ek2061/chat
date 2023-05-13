@@ -9,9 +9,6 @@ const Sidebar: React.FC = () => {
       <Navbar />
       <Search />
       <Chats />
-      <Chats />
-      <Chats />
-      <Chats />
     </div>
   );
 };

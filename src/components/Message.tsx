@@ -1,20 +1,49 @@
-import React from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { ChatContext } from "@/context/ChatContext";
+import { format } from "date-fns";
+import { Timestamp } from "firebase/firestore";
+import React, { useContext, useEffect, useRef } from "react";
 
-const Message: React.FC = () => {
+interface messagesData {
+  date: Timestamp;
+  id: string;
+  senderId: string;
+  text: string;
+  img?: string;
+}
+
+const Message: React.FC<{ message: messagesData }> = ({ message }) => {
+  const { currentUser } = useContext(AuthContext);
+  const { data } = useContext(ChatContext);
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  }, [message]);
+
+  const date = new Date(message.date.seconds * 1000);
+  const localDateString = format(date, "MM/dd HH:mm");
+
   return (
-    <div className="message owner">
+    <div
+      ref={ref}
+      className={`message ${message.senderId === currentUser?.uid && "owner"}`}
+    >
       <div className="messageInfo">
         <img
-          src="https://images.pexels.com/photos/8283967/pexels-photo-8283967.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+          src={
+            (message.senderId === currentUser?.uid
+              ? currentUser.photoURL
+              : data.user.photoURL) as string
+          }
           alt=""
         />
-        <span className="text-xs text-gray-500">just now</span>
+        <span className="text-xs text-gray-500">{localDateString}</span>
       </div>
       <div className="messageContent">
-        <p>
-          Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello
-          Hello Hello Hello
-        </p>
+        {message.text && <p>{message.text}</p>}
+        {message.img && <img src={message.img} alt="" />}
       </div>
     </div>
   );
