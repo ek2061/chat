@@ -48,6 +48,8 @@ const Input: React.FC = () => {
         }
       );
     } else {
+      if (!text) return;
+
       await updateDoc(doc(db, "chats", data.chatId), {
         messages: arrayUnion({
           id: uuidv4(),
@@ -64,17 +66,21 @@ const Input: React.FC = () => {
         : data.user.uid + currentUser.uid;
 
     await updateDoc(doc(db, "userChats", currentUser.uid), {
-      [`${combinedId}.lastMessage`]: text,
+      [`${combinedId}.lastMessage`]: img ? "📷" : text,
       [`${combinedId}.date`]: serverTimestamp(),
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
-      [`${combinedId}.lastMessage`]: text,
+      [`${combinedId}.lastMessage`]: img ? "📷" : text,
       [`${combinedId}.date`]: serverTimestamp(),
     });
 
     setText("");
     setImg(null);
+  };
+
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.code === "Enter" && handleSend();
   };
 
   return (
@@ -85,6 +91,7 @@ const Input: React.FC = () => {
         placeholder="Type something..."
         onChange={(e) => setText(e.target.value)}
         value={text}
+        onKeyDown={handleKey}
       />
 
       <div className="flex items-center gap-2.5">

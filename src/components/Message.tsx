@@ -36,13 +36,10 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         <img
           className="h-10 w-10 rounded-full object-cover"
           src={
-            (message.senderId === currentUser?.uid
-              ? currentUser.photoURL
-              : data.user.photoURL) as string
+            (isMyMessage ? currentUser.photoURL : data.user.photoURL) as string
           }
-          alt=""
+          alt={message.senderId}
         />
-        <span className="text-xs text-gray-500">{localDateString}</span>
       </div>
       <div
         className={`flex  max-w-[80%] flex-col gap-2.5 ${
@@ -50,18 +47,25 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         }`}
       >
         {message.text && (
-          <p
-            className={`max-w-max rounded-lg px-5 py-2.5 ${
-              isMyMessage
-                ? "rounded-br-none bg-blue-200"
-                : "rounded-bl-none bg-white"
-            }`}
-          >
-            {message.text}
-          </p>
+          <div>
+            <span className="text-xs text-gray-500">{localDateString}</span>
+            <p
+              className={`max-w-max rounded-lg px-5 py-2.5 ${
+                isMyMessage
+                  ? "rounded-br-none bg-blue-200"
+                  : "rounded-bl-none bg-white"
+              }`}
+            >
+              {message.text}
+            </p>
+          </div>
         )}
         {message.img && (
-          <img className="w-1/2 rounded-lg" src={message.img} alt="" />
+          <img
+            className="w-1/2 rounded-lg"
+            src={message.img}
+            alt={message.img}
+          />
         )}
       </div>
     </div>

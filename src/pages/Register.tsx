@@ -49,7 +49,6 @@ const Register: React.FC = () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           await updateProfile(res.user, { displayName, photoURL: downloadURL });
 
-          console.log(res.user);
           await setDoc(doc(db, "users", res.user.uid), {
             uid: res.user.uid,
             displayName,

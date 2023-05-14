@@ -2,7 +2,7 @@ import UserImage from "@/assets/user.png";
 import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   collection,
   doc,
@@ -30,12 +30,15 @@ const Search: React.FC = () => {
   const { currentUser } = useContext(AuthContext);
 
   const handleSearch = async () => {
+    if (!username) return;
+
     const q = query(
       collection(db, "users"),
       where("displayName", "==", username)
     );
 
     try {
+      setUser([]);
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.docs.length === 0) setError("no user found");
@@ -43,7 +46,6 @@ const Search: React.FC = () => {
 
       querySnapshot.forEach((doc) => {
         const userData = doc.data() as UserData;
-        console.log(user);
         setUser((user) => [...user, userData]);
       });
     } catch (err) {
@@ -72,29 +74,37 @@ const Search: React.FC = () => {
           await setDoc(doc(db, "chats", combinedId), { messages: [] });
 
           // create user chats
-          await setDoc(doc(db, "userChats", currentUser.uid), {
-            [combinedId]: {
-              userInfo: {
-                uid: u.uid,
-                displayName: u.displayName,
-                photoURL: u.photoURL,
+          await setDoc(
+            doc(db, "userChats", currentUser.uid),
+            {
+              [combinedId]: {
+                userInfo: {
+                  uid: u.uid,
+                  displayName: u.displayName,
+                  photoURL: u.photoURL,
+                },
+                date: serverTimestamp(),
+                lastMessage: "",
               },
-              date: serverTimestamp(),
-              lastMessage: "",
             },
-          });
+            { merge: true }
+          );
 
-          await setDoc(doc(db, "userChats", u.uid), {
-            [combinedId]: {
-              userInfo: {
-                uid: currentUser.uid,
-                displayName: currentUser.displayName,
-                photoURL: currentUser.photoURL,
+          await setDoc(
+            doc(db, "userChats", u.uid),
+            {
+              [combinedId]: {
+                userInfo: {
+                  uid: currentUser.uid,
+                  displayName: currentUser.displayName,
+                  photoURL: currentUser.photoURL,
+                },
+                date: serverTimestamp(),
+                lastMessage: "",
               },
-              date: serverTimestamp(),
-              lastMessage: "",
             },
-          });
+            { merge: true }
+          );
         }
       } catch (err) {
         console.log(err);
@@ -122,7 +132,13 @@ const Search: React.FC = () => {
 
       {user.length > 0 && (
         <div>
-          <p className="px-3">found {user.length} users</p>
+          <div className="flex items-center justify-between pr-6">
+            <p className="px-3">found {user.length} users</p>
+            <XMarkIcon
+              className="h-5 w-5 text-white hover:text-gray-400"
+              onClick={() => setUser([])}
+            />
+          </div>
           {user.map((u) => (
             <div
               className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-sidebar_hover"
