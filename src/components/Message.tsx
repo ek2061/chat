@@ -25,13 +25,16 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
   const date = new Date(message.date.seconds * 1000);
   const localDateString = format(date, "MM/dd HH:mm");
 
+  const isMyMessage = message.senderId === currentUser?.uid;
+
   return (
     <div
       ref={ref}
-      className={`message ${message.senderId === currentUser?.uid && "owner"}`}
+      className={`mb-5 flex gap-5 ${isMyMessage && "flex-row-reverse"}`}
     >
-      <div className="messageInfo">
+      <div className="flex flex-col font-light text-gray-500">
         <img
+          className="h-10 w-10 rounded-full object-cover"
           src={
             (message.senderId === currentUser?.uid
               ? currentUser.photoURL
@@ -41,9 +44,25 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         />
         <span className="text-xs text-gray-500">{localDateString}</span>
       </div>
-      <div className="messageContent">
-        {message.text && <p>{message.text}</p>}
-        {message.img && <img src={message.img} alt="" />}
+      <div
+        className={`flex  max-w-[80%] flex-col gap-2.5 ${
+          isMyMessage && "items-end"
+        }`}
+      >
+        {message.text && (
+          <p
+            className={`max-w-max rounded-lg px-5 py-2.5 ${
+              isMyMessage
+                ? "rounded-br-none bg-blue-200"
+                : "rounded-bl-none bg-white"
+            }`}
+          >
+            {message.text}
+          </p>
+        )}
+        {message.img && (
+          <img className="w-1/2 rounded-lg" src={message.img} alt="" />
+        )}
       </div>
     </div>
   );

@@ -46,21 +46,27 @@ const Chats: React.FC = () => {
   };
 
   return (
-    <div className="chats">
+    <div>
+      <p className="px-3 py-2 text-lg text-white">
+        your friends {chats.length}
+      </p>
       {chats &&
         Object.entries(chats)?.map((chats) => (
           <div
-            className="userChat"
+            className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-sidebar_hover"
             key={chats[0]}
             onClick={() => handleSelect(chats[1].userInfo)}
           >
             <img
+              className="h-12 w-12 rounded-full object-cover"
               src={chats[1].userInfo.photoURL}
               alt={chats[1].userInfo.displayName}
             />
-            <div className="userChatInfo">
-              <span>{chats[1].userInfo.displayName}</span>
-              <p>{chats[1].lastMessage}</p>
+            <div>
+              <span className="text-lg font-medium">
+                {chats[1].userInfo.displayName}
+              </span>
+              <p className="text-sm text-gray-300">{chats[1].lastMessage}</p>
             </div>
           </div>
         ))}

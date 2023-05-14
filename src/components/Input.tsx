@@ -78,15 +78,16 @@ const Input: React.FC = () => {
   };
 
   return (
-    <div className="input">
+    <div className="flex h-12 items-center justify-between bg-white p-2.5">
       <input
+        className="w-full border-none text-lg text-sidebar_hover outline-none placeholder:text-gray-400"
         type="text"
         placeholder="Type something..."
         onChange={(e) => setText(e.target.value)}
         value={text}
       />
 
-      <div className="send">
+      <div className="flex items-center gap-2.5">
         <PaperClipIcon className="h-6 cursor-pointer" />
         <input
           type="file"
@@ -97,7 +98,12 @@ const Input: React.FC = () => {
         <label htmlFor="file" className="flex items-center">
           <PhotoIcon className="h-6 cursor-pointer" />
         </label>
-        <button onClick={handleSend}>Send</button>
+        <button
+          className="cursor-pointer rounded-lg border-none bg-blue-400 px-4 py-2.5 text-white hover:bg-blue-500"
+          onClick={handleSend}
+        >
+          Send
+        </button>
       </div>
     </div>
   );

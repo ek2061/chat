@@ -1,6 +1,8 @@
 import UserImage from "@/assets/user.png";
 import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import {
   collection,
   doc,
@@ -13,7 +15,7 @@ import {
 } from "firebase/firestore";
 import React, { useContext, useState } from "react";
 
-interface User {
+interface UserData {
   displayName: string;
   email: string;
   photoURL: string;
@@ -22,7 +24,7 @@ interface User {
 
 const Search: React.FC = () => {
   const [username, setUsername] = useState<string>("");
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserData[]>([]);
   const [error, setError] = useState<string>("");
 
   const { currentUser } = useContext(AuthContext);
@@ -40,7 +42,9 @@ const Search: React.FC = () => {
       else setError("");
 
       querySnapshot.forEach((doc) => {
-        setUser(doc.data() as User);
+        const userData = doc.data() as UserData;
+        console.log(user);
+        setUser((user) => [...user, userData]);
       });
     } catch (err) {
       console.log(err);
@@ -52,13 +56,13 @@ const Search: React.FC = () => {
     e.code === "Enter" && handleSearch();
   };
 
-  const handleSelect = async () => {
+  const handleSelect = async (u: UserData) => {
     // check whether the group (chats in firestore) exists, if not create
     if (currentUser && user) {
       const combinedId =
-        currentUser.uid > user.uid
-          ? currentUser.uid + user.uid
-          : user.uid + currentUser.uid;
+        currentUser.uid > u.uid
+          ? currentUser.uid + u.uid
+          : u.uid + currentUser.uid;
 
       try {
         const res = await getDoc(doc(db, "chats", combinedId));
@@ -71,16 +75,16 @@ const Search: React.FC = () => {
           await setDoc(doc(db, "userChats", currentUser.uid), {
             [combinedId]: {
               userInfo: {
-                uid: user.uid,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
+                uid: u.uid,
+                displayName: u.displayName,
+                photoURL: u.photoURL,
               },
               date: serverTimestamp(),
               lastMessage: "",
             },
           });
 
-          await setDoc(doc(db, "userChats", user.uid), {
+          await setDoc(doc(db, "userChats", u.uid), {
             [combinedId]: {
               userInfo: {
                 uid: currentUser.uid,
@@ -96,16 +100,18 @@ const Search: React.FC = () => {
         console.log(err);
       }
     }
-    setUser(null);
+    setUser([]);
     setUsername("");
   };
 
   return (
-    <div className="search">
-      <div className="searchForm">
+    <div className="border-0 border-b-2 border-solid text-gray-500">
+      <div className="flex items-center space-x-2 p-2.5">
+        <MagnifyingGlassIcon className="h-4 w-4 text-gray-200" />
         <input
+          className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400"
           type="text"
-          placeholder="find a user"
+          placeholder="find a user by Enter"
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -113,12 +119,29 @@ const Search: React.FC = () => {
       {error && (
         <span className="px-2 text-sm text-gray-400 opacity-50">{error}</span>
       )}
-      {user && (
-        <div className="userChat" onClick={handleSelect}>
-          <img src={user?.photoURL ?? UserImage} alt="user-image" />
-          <div className="userChatInfo">
-            <span>{user?.displayName}</span>
-          </div>
+
+      {user.length > 0 && (
+        <div>
+          <p className="px-3">found {user.length} users</p>
+          {user.map((u) => (
+            <div
+              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-sidebar_hover"
+              key={u.uid}
+            >
+              <img
+                className="h-12 w-12 rounded-full object-cover"
+                src={u?.photoURL ?? UserImage}
+                alt="user-image"
+              />
+              <div className="flex w-full items-center justify-between px-2">
+                <span className="text-lg font-medium">{u?.displayName}</span>
+                <PlusIcon
+                  className="h-8 w-8 rounded-md p-1 hover:bg-gray-500"
+                  onClick={() => handleSelect(u)}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

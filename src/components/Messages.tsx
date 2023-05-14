@@ -26,7 +26,7 @@ const Messages: React.FC = () => {
   }, [data.chatId]);
 
   return (
-    <div className="messages">
+    <div className="h-[calc(100vh-160px)] overflow-y-auto bg-gray-200 p-2.5">
       {messages && messages.map((m) => <Message message={m} key={m.id} />)}
     </div>
   );
