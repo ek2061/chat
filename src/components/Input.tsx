@@ -2,6 +2,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db, storage } from "@/firebase";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import {
   Timestamp,
   arrayUnion,
@@ -84,33 +85,46 @@ const Input: React.FC = () => {
   };
 
   return (
-    <div className="flex h-12 items-center justify-between bg-white p-2.5">
-      <input
-        className="w-full border-none text-lg text-sidebar_hover outline-none placeholder:text-gray-400"
-        type="text"
-        placeholder="Type something..."
-        onChange={(e) => setText(e.target.value)}
-        value={text}
-        onKeyDown={handleKey}
-      />
+    <div className="relative">
+      {img && (
+        <div className="z-100 absolute -top-7 flex h-7 w-full items-center justify-end space-x-3 rounded-sm bg-blue-300 px-2 opacity-80">
+          <span className="text-gray-600">{img.name}</span>
+          <span className="text-slate-500">{img.size} Bytes</span>
+          <XMarkIcon
+            className="h-4 w-4 cursor-pointer text-gray-600"
+            onClick={() => setImg(null)}
+          />
+        </div>
+      )}
 
-      <div className="flex items-center gap-2.5">
-        <PaperClipIcon className="h-6 cursor-pointer" />
+      <div className="flex h-12 items-center justify-between bg-white p-2.5">
         <input
-          type="file"
-          className="hidden"
-          id="file"
-          onChange={(e) => setImg(e.target.files?.[0] || null)}
+          className="w-full border-none text-lg text-sidebar_hover outline-none placeholder:text-gray-400"
+          type="text"
+          placeholder="Type something..."
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+          onKeyDown={handleKey}
         />
-        <label htmlFor="file" className="flex items-center">
-          <PhotoIcon className="h-6 cursor-pointer" />
-        </label>
-        <button
-          className="cursor-pointer rounded-lg border-none bg-blue-400 px-4 py-2.5 text-white hover:bg-blue-500"
-          onClick={handleSend}
-        >
-          Send
-        </button>
+
+        <div className="flex items-center gap-2.5">
+          <PaperClipIcon className="h-6 cursor-pointer" />
+          <input
+            type="file"
+            className="hidden"
+            id="file"
+            onChange={(e) => setImg(e.target.files?.[0] || null)}
+          />
+          <label htmlFor="file" className="flex items-center">
+            <PhotoIcon className="h-6 cursor-pointer" />
+          </label>
+          <button
+            className="cursor-pointer rounded-lg border-none bg-blue-400 px-4 py-2.5 text-white hover:bg-blue-500"
+            onClick={handleSend}
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
