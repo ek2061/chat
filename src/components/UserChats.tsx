@@ -1,13 +1,14 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
-import { Timestamp, doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp } from "firebase/firestore";
 import React, { useContext, useEffect, useState } from "react";
 
 interface ChatsData {
   [key: string]: {
     date: Timestamp;
     lastMessage: string;
+    sender: string;
     userInfo: {
       photoURL: string;
       uid: string;
@@ -31,7 +32,11 @@ const UserChats: React.FC = () => {
       const unsubscribe = onSnapshot(
         doc(db, "userChats", currentUser.uid),
         (doc) => {
-          setChats(doc.data() as ChatsData);
+          const copy = { ...(doc.data() as ChatsData) };
+          Object.entries(copy).sort(
+            (a, b) => b[1].date?.seconds - a[1].date?.seconds
+          );
+          setChats(copy);
         }
       );
 
@@ -46,6 +51,25 @@ const UserChats: React.FC = () => {
   const handleSelect = (u: ChatsData["key"]["userInfo"]) => {
     dispatch({ type: "CHANGE_USER", payload: u });
   };
+
+  useEffect(() => {
+    if (Object.keys(chats).length > 0) {
+      const firstChatId = Object.keys(chats)[0];
+      const firstChat = chats[firstChatId];
+
+      // if sender is you, don't send a notification
+      if (firstChat.sender === "you") return;
+
+      const fiveSecondsAgo = new Date(Date.now() - 5000);
+
+      if (firstChat.date?.seconds * 1000 > fiveSecondsAgo.getTime()) {
+        new Notification(`message from ${firstChat.sender}`, {
+          body: firstChat.lastMessage,
+          icon: firstChat.userInfo.photoURL,
+        });
+      }
+    }
+  }, [chats, currentUser?.uid]);
 
   return (
     <div>

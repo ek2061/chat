@@ -69,11 +69,13 @@ const Input: React.FC = () => {
     await updateDoc(doc(db, "userChats", currentUser.uid), {
       [`${combinedId}.lastMessage`]: img ? "📷" : text,
       [`${combinedId}.date`]: serverTimestamp(),
+      [`${combinedId}.sender`]: "you",
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
       [`${combinedId}.lastMessage`]: img ? "📷" : text,
       [`${combinedId}.date`]: serverTimestamp(),
+      [`${combinedId}.sender`]: currentUser.displayName,
     });
 
     setText("");
