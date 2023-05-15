@@ -19,7 +19,7 @@ const NotifDialog: React.FC<{ setOpen: Dispatch<SetStateAction<boolean>> }> = ({
   return (
     <div className="fixed bottom-14 right-2 flex h-28 w-72 flex-col justify-end rounded-md bg-chatbar shadow-lg">
       <div className="absolute top-0 flex items-center space-x-2 p-3">
-        <BellAlertIcon className="h-10 w-10" />
+        <BellAlertIcon className="h-10 w-10 text-gray-100" />
         <p className="overflow-hidden text-sm text-gray-100">
           Turn on notifications to receive instant messages from friends!!
         </p>
