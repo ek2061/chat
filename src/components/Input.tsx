@@ -81,7 +81,7 @@ const Input: React.FC = () => {
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.code === "Enter" && handleSend();
+    if (["Enter", "NumpadEnter"].includes(e.code)) handleSend();
   };
 
   return (
