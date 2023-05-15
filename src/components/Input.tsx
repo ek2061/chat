@@ -4,10 +4,10 @@ import { db, storage } from "@/firebase";
 import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import {
-  Timestamp,
   arrayUnion,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -111,6 +111,7 @@ const Input: React.FC = () => {
           <PaperClipIcon className="h-6 cursor-pointer" />
           <input
             type="file"
+            accept="image/jpeg, image/png, image/gif"
             className="hidden"
             id="file"
             onChange={(e) => setImg(e.target.files?.[0] || null)}
