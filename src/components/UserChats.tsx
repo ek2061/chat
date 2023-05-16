@@ -94,7 +94,9 @@ const UserChats: React.FC = () => {
                 <span className="text-lg font-medium">
                   {c[1].userInfo.displayName}
                 </span>
-                <p className="text-sm text-gray-300">{c[1].lastMessage}</p>
+                <p className="text-sm text-gray-300">
+                  {`${c[1].sender}: ${c[1].lastMessage}`}
+                </p>
               </div>
             </div>
           ))}
