@@ -81,7 +81,7 @@ const UserChats: React.FC = () => {
           .sort((a, b) => b[1].date?.seconds - a[1].date?.seconds)
           .map((c) => (
             <div
-              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-sidebar_hover"
+              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-navbar"
               key={c[0]}
               onClick={() => handleSelect(c[1].userInfo)}
             >

@@ -1,22 +1,28 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db, storage } from "@/firebase";
-import { PaperClipIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { openEditor } from "@/store/codeEditor.slice";
+import { CodeBracketIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import {
+  Timestamp,
   arrayUnion,
   doc,
   serverTimestamp,
-  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import CodeEditorModal from "./CodeEditorModal";
 
 const Input: React.FC = () => {
-  const [text, setText] = useState<string>("");
-  const [img, setImg] = useState<File | null>(null);
+  const [text, setText] = useState<string>(""); // text of input box
+  const [img, setImg] = useState<File | null>(null); // selected image file
+
+  const dispatch = useAppDispatch();
+  const { open } = useAppSelector((state) => state.codeEditor);
 
   const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
@@ -101,16 +107,20 @@ const Input: React.FC = () => {
 
       <div className="flex h-12 items-center justify-between bg-white p-2.5">
         <input
-          className="w-full border-none text-lg text-sidebar_hover outline-none placeholder:text-gray-400"
+          className="w-full border-none text-lg text-navbar outline-none placeholder:text-gray-400"
           type="text"
-          placeholder="Type something..."
+          placeholder="say something here..."
           onChange={(e) => setText(e.target.value)}
           value={text}
           onKeyDown={handleKey}
         />
 
         <div className="flex items-center gap-2.5">
-          <PaperClipIcon className="h-6 cursor-pointer" />
+          <CodeBracketIcon
+            className="h-6 cursor-pointer"
+            onClick={() => dispatch(openEditor())}
+          />
+
           <input
             type="file"
             accept="image/jpeg, image/png, image/gif"
@@ -122,13 +132,15 @@ const Input: React.FC = () => {
             <PhotoIcon className="h-6 cursor-pointer" />
           </label>
           <button
-            className="cursor-pointer rounded-lg border-none bg-blue-400 px-4 py-2.5 text-white hover:bg-blue-500"
+            className="cursor-pointer rounded-lg border-none bg-blue-500 px-4 py-2.5 text-white hover:bg-blue-600"
             onClick={handleSend}
           >
             Send
           </button>
         </div>
       </div>
+
+      {open && <CodeEditorModal />}
     </div>
   );
 };

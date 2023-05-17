@@ -1,6 +1,5 @@
 import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
-import "@/style.scss";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";

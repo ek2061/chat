@@ -141,7 +141,7 @@ const Search: React.FC = () => {
           </div>
           {user.map((u) => (
             <div
-              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-sidebar_hover"
+              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-navbar"
               key={u.uid}
             >
               <img

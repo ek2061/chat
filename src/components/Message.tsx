@@ -1,5 +1,7 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
+import Code from "@/modules/Code";
+import MessageBox from "@/modules/MessageBox";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import React, { useContext, useEffect, useRef } from "react";
@@ -9,6 +11,7 @@ interface messagesData {
   id: string;
   senderId: string;
   text: string;
+  lang?: string;
   img?: string;
 }
 
@@ -32,15 +35,15 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
       ref={ref}
       className={`mb-5 flex gap-5 ${isMyMessage && "flex-row-reverse"}`}
     >
-      <div className="flex flex-col font-light text-gray-500">
-        <img
-          className="h-10 w-10 rounded-full object-cover"
-          src={
-            (isMyMessage ? currentUser.photoURL : data.user.photoURL) as string
-          }
-          alt={message.senderId}
-        />
-      </div>
+      <img
+        className="h-10 w-10 rounded-full object-cover"
+        aria-label="message-avatar"
+        src={
+          (isMyMessage ? currentUser.photoURL : data.user.photoURL) as string
+        }
+        alt={message.senderId}
+      />
+
       <div
         className={`flex  max-w-[80%] flex-col gap-2.5 ${
           isMyMessage && "items-end"
@@ -49,20 +52,19 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         {message.text && (
           <div>
             <span className="text-xs text-gray-500">{localDateString}</span>
-            <p
-              className={`max-w-max rounded-lg px-5 py-2.5 ${
-                isMyMessage
-                  ? "rounded-br-none bg-blue-200"
-                  : "rounded-bl-none bg-white"
-              }`}
-            >
-              {message.text}
-            </p>
+            <MessageBox isMyMessage={isMyMessage}>
+              {message.lang ? (
+                <Code lang={message.lang} code={message.text} />
+              ) : (
+                <p aria-label="message-text">{message.text}</p>
+              )}
+            </MessageBox>
           </div>
         )}
         {message.img && (
           <img
             className="w-1/2 rounded-lg"
+            aria-label="message-image"
             src={message.img}
             alt={message.img}
           />
