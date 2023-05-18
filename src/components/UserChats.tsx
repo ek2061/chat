@@ -90,11 +90,11 @@ const UserChats: React.FC = () => {
                 src={c[1].userInfo.photoURL}
                 alt={c[1].userInfo.displayName}
               />
-              <div>
+              <div className="flex flex-grow flex-col overflow-hidden">
                 <span className="text-lg font-medium">
                   {c[1].userInfo.displayName}
                 </span>
-                <p className="text-sm text-gray-300">
+                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-300">
                   {`${c[1].sender}: ${c[1].lastMessage}`}
                 </p>
               </div>

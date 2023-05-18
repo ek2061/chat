@@ -6,10 +6,10 @@ import Modal from "@/modules/Modal";
 import { closeEditor, setCode, setLang } from "@/store/codeEditor.slice";
 import "@/styles/prism.css";
 import {
-  Timestamp,
   arrayUnion,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { highlight, languages } from "prismjs";
@@ -59,6 +59,8 @@ const CodeEditorModal: React.FC = () => {
       [`${combinedId}.date`]: serverTimestamp(),
       [`${combinedId}.sender`]: currentUser.displayName,
     });
+
+    dispatch(closeEditor());
   };
 
   const funcHighlight = (code: string) => {

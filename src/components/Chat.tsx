@@ -10,15 +10,16 @@ const Chat: React.FC = () => {
 
   if (!data.user.uid)
     return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-gray-200 text-sidebar">
-        <ChatBubbleLeftRightIcon className="h-1/12 w-1/12" />
-        <p className="text-2xl font-semibold">Find or select your friends</p>
-        <p className="text-2xl font-semibold">and start chatting!</p>
+      <div className="flex w-full flex-1 flex-col items-center justify-center bg-gray-200 text-sidebar">
+        <ChatBubbleLeftRightIcon className="w-4/5 max-w-[90px]" />
+        <p className="text-center text-2xl font-semibold max-md:text-xl">
+          Find or select your friends and start chatting!
+        </p>
       </div>
     );
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex w-3/4 flex-1 flex-col sm:w-2/3">
       <ChatroomTool />
       <Messages />
       <Input />

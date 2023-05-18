@@ -33,7 +33,7 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
   return (
     <div
       ref={ref}
-      className={`mb-5 flex gap-5 ${isMyMessage && "flex-row-reverse"}`}
+      className={`mb-5 flex gap-5 ${isMyMessage && "flex-row-reverse"} w-full`}
     >
       <img
         className="h-10 w-10 rounded-full object-cover"
@@ -50,7 +50,7 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         }`}
       >
         {message.text && (
-          <div>
+          <div className="w-full">
             <span className="text-xs text-gray-500">{localDateString}</span>
             <MessageBox isMyMessage={isMyMessage}>
               {message.lang ? (

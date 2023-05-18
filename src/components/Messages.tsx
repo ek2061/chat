@@ -1,6 +1,6 @@
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
-import { Timestamp, doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, Timestamp } from "firebase/firestore";
 import React, { useContext, useEffect, useState } from "react";
 import Message from "./Message";
 
@@ -26,7 +26,7 @@ const Messages: React.FC = () => {
   }, [data.chatId]);
 
   return (
-    <div className="h-[calc(100vh-160px)] overflow-y-auto bg-gray-200 p-2.5">
+    <div className="h-[calc(100vh-160px)] w-full overflow-y-auto bg-gray-200 p-2.5">
       {messages && messages.map((m) => <Message message={m} key={m.id} />)}
     </div>
   );

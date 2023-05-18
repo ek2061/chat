@@ -9,8 +9,8 @@ const Navbar: React.FC = () => {
   const { currentUser } = useContext(AuthContext);
 
   return (
-    <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100 max-md:justify-end">
-      <span className="text-2xl font-bold max-md:hidden">Chat</span>
+    <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100">
+      <span className="text-2xl font-bold">Chat</span>
       <div className="flex gap-2.5">
         <img
           className="h-10 w-10 rounded-full bg-gray-100"
