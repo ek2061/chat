@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
       <div className="flex gap-2.5">
         <div className="relative">
           <img
-            className="h-10 w-10 rounded-full bg-gray-100"
+            className="h-10 w-10 rounded-full bg-gray-100 object-cover"
             src={currentUser?.photoURL ?? UserImage}
             alt="user-avatar"
           />
