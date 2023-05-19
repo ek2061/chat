@@ -6,10 +6,10 @@ import { openEditor } from "@/store/codeEditor.slice";
 import { CodeBracketIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import {
-  Timestamp,
   arrayUnion,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -109,7 +109,7 @@ const Input: React.FC = () => {
         <input
           className="w-full border-none text-lg text-navbar outline-none placeholder:text-gray-400"
           type="text"
-          placeholder="say something here..."
+          placeholder="type something here..."
           onChange={(e) => setText(e.target.value)}
           value={text}
           onKeyDown={handleKey}
