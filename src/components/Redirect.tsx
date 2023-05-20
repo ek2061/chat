@@ -7,7 +7,12 @@ export const ProtectedRoute: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { currentUser, isLoading } = useContext(AuthContext);
 
-  if (isLoading) return <>身分認證中...</>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        身分認證中...
+      </div>
+    );
 
   if (!isLoading && !currentUser) return <Navigate to="/login" />;
 
