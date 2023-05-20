@@ -1,8 +1,8 @@
+import MessageBox from "@/components/MessageBox";
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
-import MessageBox from "@/modules/MessageBox";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import React, { useContext, useEffect, useRef, useState } from "react";
