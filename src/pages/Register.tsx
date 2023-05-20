@@ -1,7 +1,8 @@
 import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
+import Preview from "@/modules/Preview";
+import { blob2base64 } from "@/utils/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { XCircleIcon } from "@heroicons/react/24/solid";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -13,9 +14,24 @@ const Register: React.FC = () => {
   const { currentUser } = useContext(AuthContext);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
-  const [imgB, setImgB] = useState<string | null>(null); // selected image base64
+  const [preview, setPreview] = useState<string>(""); // selected image preview
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(img);
+    if (!img) {
+      setPreview("");
+      return;
+    }
+
+    const func = async () => {
+      const imageSrc = await blob2base64(img);
+      setPreview(imageSrc);
+    };
+
+    func();
+  }, [img]);
 
   /* redirect to home page if logged in */
   if (currentUser) {
@@ -70,20 +86,6 @@ const Register: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (img) {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        setImgB(reader.result as string);
-      };
-
-      reader.readAsDataURL(img);
-    } else {
-      setImgB("");
-    }
-  }, [img]);
-
   return (
     <div className="flex h-screen items-center justify-center bg-sky-500">
       <div className="px-15 flex w-full max-w-md flex-col items-center gap-2.5 rounded-lg bg-white py-5">
@@ -118,6 +120,7 @@ const Register: React.FC = () => {
             className="hidden"
             id="avatar"
             onChange={(e) => setImg(e.target.files?.[0] || null)}
+            onClick={(e) => ((e.target as HTMLInputElement).value = "")}
           />
           <label
             className="flex cursor-pointer items-center gap-2.5 text-sm text-cyan-800"
@@ -127,15 +130,7 @@ const Register: React.FC = () => {
             <span>Add an avatar</span>
           </label>
 
-          {imgB && (
-            <div className="relative h-20 w-20">
-              <XCircleIcon
-                className="absolute -right-2 -top-2 h-6 w-6 cursor-pointer"
-                onClick={() => setImg(null)}
-              />
-              <img className="h-20 w-20 rounded-lg object-cover" src={imgB} />
-            </div>
-          )}
+          {preview && <Preview src={preview} onClose={() => setImg(null)} />}
 
           <button className="cursor-pointer rounded-md border-none bg-blue-400  p-2.5 font-bold text-white hover:bg-blue-500">
             Sign up

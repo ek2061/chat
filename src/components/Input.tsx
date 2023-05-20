@@ -2,24 +2,26 @@ import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db, storage } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import Preview from "@/modules/Preview";
 import { openEditor } from "@/store/codeEditor.slice";
+import { blob2base64 } from "@/utils/image";
 import { CodeBracketIcon, PhotoIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 import {
+  Timestamp,
   arrayUnion,
   doc,
   serverTimestamp,
-  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import CodeEditorModal from "./CodeEditorModal";
 
 const Input: React.FC = () => {
   const [text, setText] = useState<string>(""); // text of input box
   const [img, setImg] = useState<File | null>(null); // selected image file
+  const [preview, setPreview] = useState<string>(""); // selected image preview
 
   const dispatch = useAppDispatch();
   const { open } = useAppSelector((state) => state.codeEditor);
@@ -92,16 +94,41 @@ const Input: React.FC = () => {
     if (["Enter", "NumpadEnter"].includes(e.code)) handleSend();
   };
 
+  const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const items = e.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.indexOf("image") !== -1) {
+          const blob = item.getAsFile();
+          if (blob instanceof File) {
+            await blob2base64(blob);
+            setImg(blob);
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!img) {
+      setPreview("");
+      return;
+    }
+
+    const uploadPreview = async () => {
+      const imageSrc = await blob2base64(img);
+      setPreview(imageSrc);
+    };
+
+    uploadPreview();
+  }, [img]);
+
   return (
     <div className="relative">
       {img && (
-        <div className="z-100 absolute -top-7 flex h-7 w-full items-center justify-end space-x-3 rounded-sm bg-blue-300 px-2 opacity-80">
-          <span className="text-gray-600">{img.name}</span>
-          <span className="text-slate-500">{img.size} Bytes</span>
-          <XMarkIcon
-            className="h-4 w-4 cursor-pointer text-gray-600"
-            onClick={() => setImg(null)}
-          />
+        <div className="z-100 absolute -top-20 flex w-full justify-start space-x-3 rounded-s px-2 opacity-80">
+          <Preview src={preview} onClose={() => setImg(null)} />
         </div>
       )}
 
@@ -111,8 +138,8 @@ const Input: React.FC = () => {
           type="text"
           placeholder="type something here..."
           onChange={(e) => setText(e.target.value)}
-          value={text}
           onKeyDown={handleKey}
+          onPaste={handlePaste}
         />
 
         <div className="flex items-center gap-2.5">
@@ -127,6 +154,7 @@ const Input: React.FC = () => {
             className="hidden"
             id="file"
             onChange={(e) => setImg(e.target.files?.[0] || null)}
+            onClick={(e) => ((e.target as HTMLInputElement).value = "")}
           />
           <label htmlFor="file" className="flex items-center">
             <PhotoIcon className="h-6 cursor-pointer" />

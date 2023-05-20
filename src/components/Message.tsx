@@ -50,7 +50,7 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
         }`}
       >
         {message.text && (
-          <div className="w-full">
+          <div className="max-w-full">
             <span className="text-xs text-gray-500">{localDateString}</span>
             <MessageBox isMyMessage={isMyMessage}>
               {message.lang ? (
