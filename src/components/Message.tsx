@@ -1,10 +1,11 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import Code from "@/modules/Code";
+import ImageViewer from "@/modules/ImageViewer";
 import MessageBox from "@/modules/MessageBox";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 interface messagesData {
   date: Timestamp;
@@ -20,6 +21,8 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
   const { data } = useContext(ChatContext);
 
   const ref = useRef<HTMLDivElement>(null);
+
+  const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,12 +65,21 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
           </div>
         )}
         {message.img && (
-          <img
-            className="w-1/2 rounded-lg"
-            aria-label="message-image"
-            src={message.img}
-            alt={message.img}
-          />
+          <>
+            <img
+              className="w-1/2 cursor-pointer rounded-lg"
+              aria-label="message-image"
+              src={message.img}
+              alt={message.img}
+              onClick={() => setImageViewerOpen(true)}
+            />
+            {imageViewerOpen && (
+              <ImageViewer
+                src={message.img}
+                onClose={() => setImageViewerOpen(false)}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
