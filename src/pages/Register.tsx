@@ -19,7 +19,6 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(img);
     if (!img) {
       setPreview("");
       return;

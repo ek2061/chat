@@ -94,9 +94,11 @@ const UserChats: React.FC = () => {
                 <span className="text-lg font-medium">
                   {c[1].userInfo.displayName}
                 </span>
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-300">
-                  {`${c[1].sender}: ${c[1].lastMessage}`}
-                </p>
+                {c[1].sender && (
+                  <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-300">
+                    {`${c[1].sender}: ${c[1].lastMessage}`}
+                  </p>
+                )}
               </div>
             </div>
           ))}

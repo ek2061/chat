@@ -40,8 +40,6 @@ const Navbar: React.FC = () => {
         await updateDoc(doc(db, "users", currentUser.uid), {
           photoURL: downloadURL,
         });
-
-        console.log(downloadURL);
       }
     );
   }, [img, currentUser]);

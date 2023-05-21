@@ -6,10 +6,11 @@ import Modal from "@/modules/Modal";
 import { closeEditor, setCode, setLang } from "@/store/codeEditor.slice";
 import "@/styles/prism.css";
 import {
-  arrayUnion,
+  Timestamp,
+  addDoc,
+  collection,
   doc,
   serverTimestamp,
-  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { highlight, languages } from "prismjs";
@@ -33,31 +34,24 @@ const CodeEditorModal: React.FC = () => {
 
     if (!code) return;
 
-    await updateDoc(doc(db, "chats", data.chatId), {
-      messages: arrayUnion({
-        id: uuidv4(),
-        text: code,
-        lang: lang,
-        senderId: currentUser.uid,
-        date: Timestamp.now(),
-      }),
+    await addDoc(collection(db, "chats", data.chatId, "messages"), {
+      id: uuidv4(),
+      text: code,
+      lang: lang,
+      senderId: currentUser.uid,
+      date: Timestamp.now(),
     });
 
-    const combinedId =
-      currentUser.uid > data.user.uid
-        ? currentUser.uid + data.user.uid
-        : data.user.uid + currentUser.uid;
-
     await updateDoc(doc(db, "userChats", currentUser.uid), {
-      [`${combinedId}.lastMessage`]: "📋",
-      [`${combinedId}.date`]: serverTimestamp(),
-      [`${combinedId}.sender`]: "you",
+      [`${data.chatId}.lastMessage`]: "📋",
+      [`${data.chatId}.date`]: serverTimestamp(),
+      [`${data.chatId}.sender`]: "you",
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
-      [`${combinedId}.lastMessage`]: "📋",
-      [`${combinedId}.date`]: serverTimestamp(),
-      [`${combinedId}.sender`]: currentUser.displayName,
+      [`${data.chatId}.lastMessage`]: "📋",
+      [`${data.chatId}.date`]: serverTimestamp(),
+      [`${data.chatId}.sender`]: currentUser.displayName,
     });
 
     dispatch(closeEditor());

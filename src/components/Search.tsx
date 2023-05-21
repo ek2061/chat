@@ -4,9 +4,9 @@ import { db } from "@/firebase";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
+  addDoc,
   collection,
   doc,
-  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -55,7 +55,10 @@ const Search: React.FC = () => {
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.code === "Enter" && handleSearch();
+    if (e.key === "Enter") {
+      e.currentTarget.value = "";
+      handleSearch();
+    }
   };
 
   const handleSelect = async (u: UserData) => {
@@ -67,11 +70,13 @@ const Search: React.FC = () => {
           : u.uid + currentUser.uid;
 
       try {
-        const res = await getDoc(doc(db, "chats", combinedId));
+        const res = await getDocs(
+          collection(db, "chats", combinedId, "messages")
+        );
 
-        if (!res.exists()) {
+        if (res.empty) {
           //create a chat in chats collection
-          await setDoc(doc(db, "chats", combinedId), { messages: [] });
+          await addDoc(collection(db, "chats", combinedId, "messages"), {});
 
           // create user chats
           await setDoc(

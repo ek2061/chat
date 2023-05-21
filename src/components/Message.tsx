@@ -5,7 +5,7 @@ import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 
 interface messagesData {
   date: Timestamp;
@@ -16,17 +16,16 @@ interface messagesData {
   img?: string;
 }
 
-const Message: React.FC<{ message: messagesData }> = ({ message }) => {
+interface MessageProps {
+  message: messagesData;
+  scrollEnd?: () => void;
+}
+
+const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
   const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
 
-  const ref = useRef<HTMLDivElement>(null);
-
   const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
-  }, [message]);
 
   const date = new Date(message.date.seconds * 1000);
   const localDateString = format(date, "MM/dd HH:mm");
@@ -35,7 +34,6 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
 
   return (
     <div
-      ref={ref}
       className={`mb-5 flex gap-5 ${isMyMessage && "flex-row-reverse"} w-full`}
     >
       <img
@@ -71,6 +69,7 @@ const Message: React.FC<{ message: messagesData }> = ({ message }) => {
               aria-label="message-image"
               src={message.img}
               alt={message.img}
+              onLoad={scrollEnd}
               onClick={() => setImageViewerOpen(true)}
             />
             {imageViewerOpen && (

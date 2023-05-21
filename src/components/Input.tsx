@@ -8,7 +8,8 @@ import { blob2base64 } from "@/utils/image";
 import { CodeBracketIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import {
   Timestamp,
-  arrayUnion,
+  addDoc,
+  collection,
   doc,
   serverTimestamp,
   updateDoc,
@@ -45,45 +46,36 @@ const Input: React.FC = () => {
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await updateDoc(doc(db, "chats", data.chatId), {
-            messages: arrayUnion({
-              id: uuidv4(),
-              text,
-              senderId: currentUser.uid,
-              date: Timestamp.now(),
-              img: downloadURL,
-            }),
+          await addDoc(collection(db, "chats", data.chatId, "messages"), {
+            id: uuidv4(),
+            text,
+            senderId: currentUser.uid,
+            date: Timestamp.now(),
+            img: downloadURL,
           });
         }
       );
     } else {
       if (!text) return;
 
-      await updateDoc(doc(db, "chats", data.chatId), {
-        messages: arrayUnion({
-          id: uuidv4(),
-          text,
-          senderId: currentUser.uid,
-          date: Timestamp.now(),
-        }),
+      await addDoc(collection(db, "chats", data.chatId, "messages"), {
+        id: uuidv4(),
+        text,
+        senderId: currentUser.uid,
+        date: Timestamp.now(),
       });
     }
 
-    const combinedId =
-      currentUser.uid > data.user.uid
-        ? currentUser.uid + data.user.uid
-        : data.user.uid + currentUser.uid;
-
     await updateDoc(doc(db, "userChats", currentUser.uid), {
-      [`${combinedId}.lastMessage`]: img ? "📷" : text,
-      [`${combinedId}.date`]: serverTimestamp(),
-      [`${combinedId}.sender`]: "you",
+      [`${data.chatId}.lastMessage`]: img ? "📷" : text,
+      [`${data.chatId}.date`]: serverTimestamp(),
+      [`${data.chatId}.sender`]: "you",
     });
 
     await updateDoc(doc(db, "userChats", data.user.uid), {
-      [`${combinedId}.lastMessage`]: img ? "📷" : text,
-      [`${combinedId}.date`]: serverTimestamp(),
-      [`${combinedId}.sender`]: currentUser.displayName,
+      [`${data.chatId}.lastMessage`]: img ? "📷" : text,
+      [`${data.chatId}.date`]: serverTimestamp(),
+      [`${data.chatId}.sender`]: currentUser.displayName,
     });
 
     setText("");
@@ -91,7 +83,10 @@ const Input: React.FC = () => {
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (["Enter", "NumpadEnter"].includes(e.code)) handleSend();
+    if (e.key === "Enter" && text) {
+      e.currentTarget.value = "";
+      handleSend();
+    }
   };
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {

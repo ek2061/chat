@@ -1,7 +1,14 @@
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
-import { doc, onSnapshot, Timestamp } from "firebase/firestore";
-import React, { useContext, useEffect, useState } from "react";
+import {
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  Timestamp,
+} from "firebase/firestore";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 
 interface messagesData {
@@ -14,20 +21,49 @@ interface messagesData {
 const Messages: React.FC = () => {
   const [messages, setMessages] = useState<messagesData[]>([]);
   const { data } = useContext(ChatContext);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, "chats", data.chatId), (doc) => {
-      doc.exists() && setMessages(doc.data().messages);
-    });
+    if (!data.chatId) return;
+
+    const unsubscribe = onSnapshot(
+      query(
+        collection(db, "chats", data.chatId, "messages"),
+        orderBy("date", "desc"),
+        limit(10)
+      ),
+      (snapshot) => {
+        const m: messagesData[] = [];
+        snapshot.forEach((doc) => {
+          m.push(doc.data() as messagesData);
+        });
+        setMessages(m.reverse());
+      }
+    );
 
     return () => {
       unsubscribe();
     };
   }, [data.chatId]);
 
+  const scrollEnd = () => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  };
+
+  useEffect(() => {
+    scrollEnd();
+  }, [messages]);
+
   return (
     <div className="h-[calc(100vh-160px)] w-full overflow-y-auto bg-gray-200 p-2.5">
-      {messages && messages.map((m) => <Message message={m} key={m.id} />)}
+      {messages &&
+        messages.map((m) => (
+          <Message key={m.id} message={m} scrollEnd={scrollEnd} />
+        ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
