@@ -1,3 +1,4 @@
+import UserImage from "@/assets/user.png";
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
@@ -117,8 +118,8 @@ const UserChats: React.FC = () => {
               onClick={() => handleSelect(c[1].userInfo)}
             >
               <img
-                className="h-12 w-12 rounded-full object-cover"
-                src={c[1].userInfo.photoURL}
+                className="h-10 w-10 rounded-full bg-gray-100 object-cover"
+                src={c[1].userInfo.photoURL ?? UserImage}
                 alt={c[1].userInfo.displayName}
               />
               <div className="flex flex-grow flex-col overflow-hidden">

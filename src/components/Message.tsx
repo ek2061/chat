@@ -1,3 +1,4 @@
+import UserImage from "@/assets/user.png";
 import MessageBox from "@/components/MessageBox";
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
@@ -42,7 +43,9 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
         className="h-10 w-10 rounded-full object-cover"
         aria-label="message-avatar"
         src={
-          (isMyMessage ? currentUser.photoURL : data.user.photoURL) as string
+          (isMyMessage
+            ? currentUser.photoURL ?? UserImage
+            : data.user.photoURL ?? UserImage) as string
         }
         alt={message.senderId}
       />

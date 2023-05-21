@@ -9,6 +9,7 @@ import { signOut, updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
   const { currentUser } = useContext(AuthContext);
@@ -20,28 +21,53 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!img) return;
-    if (!currentUser?.uid) return;
+    if (!img || !currentUser?.uid) return;
 
-    const storageRef = ref(storage, `avatar/${currentUser.uid}`);
+    const handleUpload = async () => {
+      const storageRef = ref(storage, `avatar/${currentUser.uid}`);
 
-    const uploadTask = uploadBytesResumable(storageRef, img as Blob);
+      const uploadTask = uploadBytesResumable(storageRef, img as Blob);
 
-    uploadTask.on(
-      "state_changed",
-      null,
-      (err) => {
-        console.log(err);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        await updateProfile(auth.currentUser!, { photoURL: downloadURL });
+      try {
+        await toast.promise(
+          new Promise((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              null,
+              (err) => {
+                console.log(err);
+                reject(err);
+              },
+              async () => {
+                const downloadURL = await getDownloadURL(
+                  uploadTask.snapshot.ref
+                );
+                await updateProfile(auth.currentUser!, {
+                  photoURL: downloadURL,
+                });
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                  photoURL: downloadURL,
+                });
 
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          photoURL: downloadURL,
-        });
+                resolve(downloadURL);
+              }
+            );
+          }),
+          {
+            pending: "Avatar uploading...",
+            success: "Avatar upload successful. Please refresh page.",
+            error: "Avatar upload failed. Please try again later.",
+          },
+          {
+            autoClose: 8000,
+          }
+        );
+      } catch (error) {
+        console.error("avatar upload error:", error);
       }
-    );
+    };
+
+    handleUpload();
   }, [img, currentUser]);
 
   return (

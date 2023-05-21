@@ -24,12 +24,12 @@ const Register: React.FC = () => {
       return;
     }
 
-    const func = async () => {
+    const uploadPreview = async () => {
       const imageSrc = await blob2base64(img);
       setPreview(imageSrc);
     };
 
-    func();
+    uploadPreview();
   }, [img]);
 
   /* redirect to home page if logged in */
@@ -51,31 +51,43 @@ const Register: React.FC = () => {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      const storageRef = ref(storage, `avatar/${res.user.uid}`);
+      if (img) {
+        const storageRef = ref(storage, `avatar/${res.user.uid}`);
 
-      const uploadTask = uploadBytesResumable(storageRef, img as Blob);
-      uploadTask.on(
-        "state_changed",
-        null,
-        () => {
-          setError("upload failed");
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await updateProfile(res.user, { displayName, photoURL: downloadURL });
+        const uploadTask = uploadBytesResumable(storageRef, img as Blob);
+        uploadTask.on(
+          "state_changed",
+          null,
+          () => {
+            setError("upload failed");
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            await updateProfile(res.user, {
+              displayName,
+              photoURL: downloadURL,
+            });
 
-          await setDoc(doc(db, "users", res.user.uid), {
-            uid: res.user.uid,
-            displayName,
-            email,
-            photoURL: downloadURL,
-          });
+            await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayName,
+              email,
+              photoURL: downloadURL,
+            });
 
-          await setDoc(doc(db, "userChats", res.user.uid), {});
+            await setDoc(doc(db, "userChats", res.user.uid), {});
 
-          navigate("/");
-        }
-      );
+            navigate("/");
+          }
+        );
+      } else {
+        await setDoc(doc(db, "users", res.user.uid), {
+          uid: res.user.uid,
+          displayName,
+          email,
+          photoURL: null,
+        });
+      }
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(err.code);
@@ -113,7 +125,6 @@ const Register: React.FC = () => {
             placeholder="password"
           />
           <input
-            required
             type="file"
             accept="image/jpeg, image/png, image/gif"
             className="hidden"
@@ -126,7 +137,7 @@ const Register: React.FC = () => {
             htmlFor="avatar"
           >
             <UserCircleIcon className="h-6 w-6" />
-            <span>Add an avatar</span>
+            <span>Add an avatar if you want</span>
           </label>
 
           {preview && <Preview src={preview} onClose={() => setImg(null)} />}
