@@ -5,7 +5,7 @@ import {
   ArrowRightOnRectangleIcon,
   CameraIcon,
 } from "@heroicons/react/24/solid";
-import { signOut, updateProfile } from "firebase/auth";
+import { User, signOut, updateProfile } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useContext, useEffect, useState } from "react";
@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!img || !currentUser?.uid) return;
+    if (!img || !currentUser?.uid || !auth.currentUser) return;
 
     const handleUpload = async () => {
       const storageRef = ref(storage, `avatar/${currentUser.uid}`);
@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
                 const downloadURL = await getDownloadURL(
                   uploadTask.snapshot.ref
                 );
-                await updateProfile(auth.currentUser!, {
+                await updateProfile(auth.currentUser as User, {
                   photoURL: downloadURL,
                 });
                 await updateDoc(doc(db, "users", currentUser.uid), {
