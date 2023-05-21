@@ -3,6 +3,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
+import Skeleton from "@/modules/Skeleton";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import React, { useContext, useState } from "react";
@@ -18,7 +19,7 @@ interface messagesData {
 
 interface MessageProps {
   message: messagesData;
-  scrollEnd?: () => void;
+  scrollEnd: () => void;
 }
 
 const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
@@ -26,6 +27,7 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
   const { data } = useContext(ChatContext);
 
   const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const date = new Date(message.date.seconds * 1000);
   const localDateString = format(date, "MM/dd HH:mm");
@@ -64,12 +66,18 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
         )}
         {message.img && (
           <>
+            {loading && <Skeleton />}
             <img
-              className="w-1/2 cursor-pointer rounded-lg"
+              className={`${
+                loading && "hidden"
+              } w-1/2 cursor-pointer rounded-lg`}
               aria-label="message-image"
               src={message.img}
               alt={message.img}
-              onLoad={scrollEnd}
+              onLoad={() => {
+                setLoading(false);
+                scrollEnd();
+              }}
               onClick={() => setImageViewerOpen(true)}
             />
             {imageViewerOpen && (

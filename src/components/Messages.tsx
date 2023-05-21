@@ -2,7 +2,6 @@ import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
 import {
   collection,
-  limit,
   onSnapshot,
   orderBy,
   query,
@@ -29,8 +28,8 @@ const Messages: React.FC = () => {
     const unsubscribe = onSnapshot(
       query(
         collection(db, "chats", data.chatId, "messages"),
-        orderBy("date", "desc"),
-        limit(10)
+        orderBy("date", "desc")
+        // limit(10)
       ),
       (snapshot) => {
         const m: messagesData[] = [];
