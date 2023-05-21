@@ -83,11 +83,7 @@ const Search: React.FC = () => {
             doc(db, "userChats", currentUser.uid),
             {
               [combinedId]: {
-                userInfo: {
-                  uid: u.uid,
-                  displayName: u.displayName,
-                  photoURL: u.photoURL,
-                },
+                userInfo: doc(db, "users", u.uid),
                 date: serverTimestamp(),
                 lastMessage: "",
               },
@@ -99,11 +95,7 @@ const Search: React.FC = () => {
             doc(db, "userChats", u.uid),
             {
               [combinedId]: {
-                userInfo: {
-                  uid: currentUser.uid,
-                  displayName: currentUser.displayName,
-                  photoURL: currentUser.photoURL,
-                },
+                userInfo: doc(db, "users", currentUser.uid),
                 date: serverTimestamp(),
                 lastMessage: "",
               },
