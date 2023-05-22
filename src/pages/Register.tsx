@@ -81,6 +81,11 @@ const Register: React.FC = () => {
           }
         );
       } else {
+        await updateProfile(res.user, {
+          displayName,
+          photoURL: null,
+        });
+
         await setDoc(doc(db, "users", res.user.uid), {
           uid: res.user.uid,
           displayName,
