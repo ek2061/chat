@@ -4,7 +4,13 @@ import Preview from "@/modules/Preview";
 import { blob2base64 } from "@/utils/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  User,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useContext, useEffect, useState } from "react";
@@ -33,7 +39,7 @@ const Register: React.FC = () => {
   }, [img]);
 
   /* redirect to home page if logged in */
-  if (currentUser) {
+  if (currentUser?.emailVerified) {
     return <Navigate to="/" />;
   }
 
@@ -47,6 +53,7 @@ const Register: React.FC = () => {
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
+    form.reset();
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -76,8 +83,6 @@ const Register: React.FC = () => {
             });
 
             await setDoc(doc(db, "userChats", res.user.uid), {});
-
-            navigate("/");
           }
         );
       } else {
@@ -93,6 +98,13 @@ const Register: React.FC = () => {
           photoURL: null,
         });
       }
+
+      await sendEmailVerification(auth.currentUser as User);
+
+      // create user will generate auth, so i have to sign out
+      await signOut(auth);
+
+      navigate("/login");
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(err.code);
@@ -151,7 +163,7 @@ const Register: React.FC = () => {
             Sign up
           </button>
           {error && (
-            <span className="text-center text-sm font-semibold text-red-500">
+            <span className="w-64 text-center text-sm font-semibold text-red-500">
               {error}
             </span>
           )}
