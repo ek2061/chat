@@ -1,29 +1,16 @@
-import UserImage from "@/assets/user.png";
 import { AuthContext } from "@/context/AuthContext";
-import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
-import { doc, getDoc, onSnapshot, Timestamp } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useContext, useEffect, useState } from "react";
-
-interface ChatsData {
-  [key: string]: {
-    date: Timestamp;
-    lastMessage: string;
-    sender: string;
-    userInfo: {
-      photoURL: string;
-      email: string;
-      uid: string;
-      displayName: string;
-    };
-  };
-}
+import { ChatsData } from "./type";
+import { UserItem } from "./UserItem";
+import { UserSkeleton } from "./UserSkeleton";
 
 const UserChats: React.FC = () => {
   const [chats, setChats] = useState<ChatsData>({});
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { currentUser } = useContext(AuthContext);
-  const { dispatch } = useContext(ChatContext);
 
   useEffect(() => {
     const getChats = async () => {
@@ -71,6 +58,7 @@ const UserChats: React.FC = () => {
           getChats().catch((error) => {
             console.error("Error getting chats:", error);
           });
+          setLoading(false);
         }
       );
 
@@ -79,10 +67,6 @@ const UserChats: React.FC = () => {
       };
     }
   }, [currentUser?.uid]);
-
-  const handleSelect = (u: ChatsData["key"]["userInfo"]) => {
-    dispatch({ type: "CHANGE_USER", payload: u });
-  };
 
   useEffect(() => {
     if (Object.keys(chats).length > 0) {
@@ -104,37 +88,18 @@ const UserChats: React.FC = () => {
   }, [chats, currentUser?.uid]);
 
   return (
-    <div>
+    <>
       <p className="px-3 py-2 text-lg text-white">
         your friends ({Object.keys(chats).length})
       </p>
-      {chats &&
-        Object.entries(chats)
-          .sort((a, b) => b[1].date?.seconds - a[1].date?.seconds)
-          .map((c) => (
-            <div
-              className="flex cursor-pointer items-center gap-2.5 p-2.5 text-white hover:bg-navbar"
-              key={c[0]}
-              onClick={() => handleSelect(c[1].userInfo)}
-            >
-              <img
-                className="h-10 w-10 rounded-full bg-gray-100 object-cover"
-                src={c[1].userInfo.photoURL ?? UserImage}
-                alt={c[1].userInfo.displayName}
-              />
-              <div className="flex flex-grow flex-col overflow-hidden">
-                <span className="text-lg font-medium">
-                  {c[1].userInfo.displayName}
-                </span>
-                {c[1].sender && (
-                  <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-300">
-                    {`${c[1].sender}: ${c[1].lastMessage}`}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-    </div>
+      <div className="overflow-y-auto">
+        {loading && [1, 2, 3].map((n) => <UserSkeleton key={n} />)}
+        {chats &&
+          Object.entries(chats)
+            .sort((a, b) => b[1].date?.seconds - a[1].date?.seconds)
+            .map((c) => <UserItem loading={loading} key={c[0]} chat={c[1]} />)}
+      </div>
+    </>
   );
 };
 

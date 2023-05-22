@@ -1,3 +1,5 @@
+import { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useRoutes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,7 +10,9 @@ const App: React.FC = () => {
 
   return (
     <>
-      {content}
+      <SkeletonTheme baseColor="#ebebeb" highlightColor="#bababa">
+        {content}
+      </SkeletonTheme>
       <ToastContainer
         position="top-center"
         autoClose={5000}
