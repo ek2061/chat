@@ -10,11 +10,6 @@ interface ChatState {
   };
 }
 
-interface ChatContextValue {
-  data: ChatState;
-  dispatch: (action: ChatAction) => void;
-}
-
 interface ChatAction {
   type: string;
   payload: {
@@ -24,8 +19,13 @@ interface ChatAction {
   };
 }
 
-export const ChatContext = createContext<ChatContextValue>(
-  {} as ChatContextValue
+interface ChatContextType {
+  data: ChatState;
+  dispatch: (action: ChatAction) => void;
+}
+
+export const ChatContext = createContext<ChatContextType>(
+  {} as ChatContextType
 );
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
