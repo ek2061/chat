@@ -1,16 +1,16 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Modal from "@/modules/Modal";
 import { closeEditor, setCode, setLang } from "@/store/codeEditor.slice";
 import "@/styles/prism.css";
 import {
-  Timestamp,
   addDoc,
   collection,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { highlight, languages } from "prismjs";

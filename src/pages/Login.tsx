@@ -1,4 +1,5 @@
 import { auth } from "@/firebase";
+import withPageLayout from "@/hoc/withPageLayout";
 import { FirebaseError } from "firebase/app";
 import {
   browserLocalPersistence,
@@ -84,4 +85,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default withPageLayout(Login);

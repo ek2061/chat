@@ -2,6 +2,7 @@ import Chat from "@/components/Chat";
 import Navbar from "@/components/Navbar";
 import NotifDialog from "@/components/NotifDialog";
 import Sidebar from "@/components/Sidebar";
+import withPageLayout from "@/hoc/withPageLayout";
 import { useState } from "react";
 
 const Home = () => {
@@ -20,4 +21,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withPageLayout(Home);

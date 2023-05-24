@@ -1,17 +1,17 @@
 import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db, storage } from "@/firebase";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Preview from "@/modules/Preview";
 import { openEditor } from "@/store/codeEditor.slice";
 import { blob2base64 } from "@/utils/image";
 import { CodeBracketIcon, PhotoIcon } from "@heroicons/react/24/outline";
 import {
-  Timestamp,
   addDoc,
   collection,
   doc,
   serverTimestamp,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";

@@ -1,15 +1,16 @@
 import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
+import withPageLayout from "@/hoc/withPageLayout";
 import Preview from "@/modules/Preview";
 import { blob2base64 } from "@/utils/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { FirebaseError } from "firebase/app";
 import {
-  User,
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signOut,
   updateProfile,
+  User,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -176,4 +177,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+export default withPageLayout(Register);
