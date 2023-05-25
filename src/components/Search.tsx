@@ -1,6 +1,6 @@
 import UserImage from "@/assets/user.png";
-import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
@@ -13,7 +13,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
 interface UserData {
   displayName: string;
@@ -27,7 +27,7 @@ const Search: React.FC = () => {
   const [user, setUser] = useState<UserData[]>([]);
   const [error, setError] = useState<string>("");
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
   const handleSearch = async () => {
     if (!username) return;

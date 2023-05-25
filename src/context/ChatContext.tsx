@@ -1,5 +1,5 @@
-import { createContext, ReactNode, useContext, useReducer } from "react";
-import { AuthContext } from "./AuthContext";
+import { useAppSelector } from "@/hooks/useRedux";
+import { createContext, ReactNode, useReducer } from "react";
 
 interface ChatState {
   chatId: string;
@@ -29,7 +29,7 @@ export const ChatContext = createContext<ChatContextType>(
 );
 
 export const ChatContextProvider = ({ children }: { children: ReactNode }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAppSelector((state) => state.auth);
   const INITIAL_STATE: ChatState = {
     chatId: "null",
     user: { uid: "", displayName: "", photoURL: "" },

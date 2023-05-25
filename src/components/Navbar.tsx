@@ -1,18 +1,18 @@
 import UserImage from "@/assets/user.png";
-import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import {
   ArrowRightOnRectangleIcon,
   CameraIcon,
 } from "@heroicons/react/24/solid";
-import { User, signOut, updateProfile } from "firebase/auth";
+import { signOut, updateProfile, User } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
 

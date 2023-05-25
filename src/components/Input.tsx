@@ -1,4 +1,3 @@
-import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db, storage } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
@@ -26,8 +25,8 @@ const Input: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const { open } = useAppSelector((state) => state.codeEditor);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
-  const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
 
   const handleSend = async () => {

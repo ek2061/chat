@@ -4,9 +4,11 @@ import {
   configureStore,
   ThunkAction,
 } from "@reduxjs/toolkit";
+import { authSlice } from "./auth.slice";
 import { codeEditorSlice } from "./codeEditor.slice";
 
 const reducer = combineReducers({
+  auth: authSlice.reducer,
   codeEditor: codeEditorSlice.reducer,
 });
 

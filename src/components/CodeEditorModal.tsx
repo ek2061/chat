@@ -1,4 +1,3 @@
-import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
@@ -25,8 +24,8 @@ import { v4 as uuidv4 } from "uuid";
 const CodeEditorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { open, lang, code } = useAppSelector((state) => state.codeEditor);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
-  const { currentUser } = useContext(AuthContext);
   const { data } = useContext(ChatContext);
 
   const handleSend = async () => {

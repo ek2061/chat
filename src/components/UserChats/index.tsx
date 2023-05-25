@@ -1,7 +1,7 @@
-import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatsData } from "./type";
 import { UserItem } from "./UserItem";
 import { UserSkeleton } from "./UserSkeleton";
@@ -10,7 +10,7 @@ const UserChats: React.FC = () => {
   const [chats, setChats] = useState<ChatsData>({});
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const getChats = async () => {

@@ -1,7 +1,7 @@
 import UserImage from "@/assets/user.png";
 import MessageBox from "@/components/MessageBox";
-import { AuthContext } from "@/context/AuthContext";
 import { ChatContext } from "@/context/ChatContext";
+import { useAppSelector } from "@/hooks/useRedux";
 import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
 import Skeleton from "@/modules/Skeleton";
@@ -24,7 +24,7 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useAppSelector((state) => state.auth);
   const { data } = useContext(ChatContext);
 
   const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
