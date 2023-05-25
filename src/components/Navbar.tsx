@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
-  const { currentUser } = useAppSelector((state) => state.auth);
+  const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
 
@@ -21,10 +21,13 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!img || !currentUser?.uid || !auth.currentUser) return;
+    if (!img || !authData.currentUser?.uid || !auth.currentUser) return;
 
     const handleUpload = async () => {
-      const storageRef = ref(storage, `avatar/${currentUser.uid}`);
+      const storageRef = ref(
+        storage,
+        `avatar/${authData.currentUser?.uid as string}`
+      );
 
       const uploadTask = uploadBytesResumable(storageRef, img as Blob);
 
@@ -45,9 +48,12 @@ const Navbar: React.FC = () => {
                 await updateProfile(auth.currentUser as User, {
                   photoURL: downloadURL,
                 });
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                  photoURL: downloadURL,
-                });
+                await updateDoc(
+                  doc(db, "users", authData.currentUser?.uid as string),
+                  {
+                    photoURL: downloadURL,
+                  }
+                );
 
                 resolve(downloadURL);
               }
@@ -68,7 +74,7 @@ const Navbar: React.FC = () => {
     };
 
     handleUpload();
-  }, [img, currentUser]);
+  }, [img, authData.currentUser]);
 
   return (
     <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100">
@@ -77,7 +83,7 @@ const Navbar: React.FC = () => {
         <div className="relative">
           <img
             className="h-10 w-10 rounded-full bg-gray-100 object-cover"
-            src={currentUser?.photoURL ?? UserImage}
+            src={authData.currentUser?.photoURL ?? UserImage}
             alt="user-avatar"
           />
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-full bg-gray-700 opacity-0 transition-opacity duration-300 hover:opacity-75">
@@ -98,7 +104,7 @@ const Navbar: React.FC = () => {
         </div>
 
         <span className="flex items-center text-lg">
-          {currentUser?.displayName}
+          {authData.currentUser?.displayName}
         </span>
         <button
           className="flex cursor-pointer items-center space-x-2 rounded-md border-none bg-gray-500 text-sm text-gray-100"

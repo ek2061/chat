@@ -18,7 +18,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register: React.FC = () => {
-  const { currentUser } = useAppSelector((state) => state.auth);
+  const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
   const [preview, setPreview] = useState<string>(""); // selected image preview
@@ -40,7 +40,7 @@ const Register: React.FC = () => {
   }, [img]);
 
   /* redirect to home page if logged in */
-  if (currentUser?.emailVerified) {
+  if (authData.currentUser?.emailVerified) {
     return <Navigate to="/" />;
   }
 

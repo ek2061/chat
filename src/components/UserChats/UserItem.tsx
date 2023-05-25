@@ -1,6 +1,6 @@
 import UserImage from "@/assets/user.png";
-import { ChatContext } from "@/context/ChatContext";
-import { useContext } from "react";
+import { useAppDispatch } from "@/hooks/useRedux";
+import { changeChatUser } from "@/store/user.slice";
 import { ChatsData } from "./type";
 
 interface UserItemProps {
@@ -9,10 +9,10 @@ interface UserItemProps {
 }
 
 export const UserItem: React.FC<UserItemProps> = ({ loading, chat }) => {
-  const { dispatch } = useContext(ChatContext);
+  const dispatch = useAppDispatch();
 
   const handleSelect = (u: ChatsData["key"]["userInfo"]) => {
-    dispatch({ type: "CHANGE_USER", payload: u });
+    dispatch(changeChatUser(u));
   };
 
   return (

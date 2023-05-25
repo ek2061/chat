@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import "nprogress/nprogress.css";
 import React, { useEffect } from "react";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -10,7 +10,7 @@ import { FallbackProvider } from "./context/FallbackContext";
 import { auth } from "./firebase";
 import { useAppDispatch } from "./hooks/useRedux";
 import { routes } from "./routes";
-import { setCurrentUser, setLoading } from "./store/auth.slice";
+import { setCurrentUser, setLoading } from "./store/user.slice";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +19,12 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(setLoading);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      dispatch(setCurrentUser(user));
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(setCurrentUser({ uid, email, displayName, photoURL } as User));
+      } else {
+        dispatch(setCurrentUser(null));
+      }
     });
 
     return unsubscribe;

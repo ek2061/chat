@@ -1,13 +1,12 @@
 import UserImage from "@/assets/user.png";
 import MessageBox from "@/components/MessageBox";
-import { ChatContext } from "@/context/ChatContext";
 import { useAppSelector } from "@/hooks/useRedux";
 import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
 import Skeleton from "@/modules/Skeleton";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
 interface messagesData {
   date: Timestamp;
@@ -24,8 +23,7 @@ interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
-  const { currentUser } = useAppSelector((state) => state.auth);
-  const { data } = useContext(ChatContext);
+  const { authData, chatData } = useAppSelector((state) => state.user);
 
   const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,7 +31,7 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
   const date = new Date(message.date.seconds * 1000);
   const localDateString = format(date, "MM/dd HH:mm");
 
-  const isMyMessage = message.senderId === currentUser?.uid;
+  const isMyMessage = message.senderId === authData.currentUser?.uid;
 
   return (
     <div
@@ -44,8 +42,8 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
         aria-label="message-avatar"
         src={
           (isMyMessage
-            ? currentUser.photoURL ?? UserImage
-            : data.user.photoURL ?? UserImage) as string
+            ? authData.currentUser?.photoURL ?? UserImage
+            : chatData.user.photoURL ?? UserImage) as string
         }
         alt={message.senderId}
       />

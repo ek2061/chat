@@ -27,7 +27,7 @@ const Search: React.FC = () => {
   const [user, setUser] = useState<UserData[]>([]);
   const [error, setError] = useState<string>("");
 
-  const { currentUser } = useAppSelector((state) => state.auth);
+  const { authData } = useAppSelector((state) => state.user);
 
   const handleSearch = async () => {
     if (!username) return;
@@ -63,11 +63,11 @@ const Search: React.FC = () => {
 
   const handleSelect = async (u: UserData) => {
     // check whether the group (chats in firestore) exists, if not create
-    if (currentUser && user) {
+    if (authData.currentUser && user) {
       const combinedId =
-        currentUser.uid > u.uid
-          ? currentUser.uid + u.uid
-          : u.uid + currentUser.uid;
+        authData.currentUser.uid > u.uid
+          ? authData.currentUser.uid + u.uid
+          : u.uid + authData.currentUser.uid;
 
       try {
         const res = await getDocs(
@@ -80,7 +80,7 @@ const Search: React.FC = () => {
 
           // create user chats
           await setDoc(
-            doc(db, "userChats", currentUser.uid),
+            doc(db, "userChats", authData.currentUser.uid),
             {
               [combinedId]: {
                 userInfo: doc(db, "users", u.uid),
@@ -95,7 +95,7 @@ const Search: React.FC = () => {
             doc(db, "userChats", u.uid),
             {
               [combinedId]: {
-                userInfo: doc(db, "users", currentUser.uid),
+                userInfo: doc(db, "users", authData.currentUser.uid),
                 date: serverTimestamp(),
                 lastMessage: "",
               },

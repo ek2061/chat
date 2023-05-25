@@ -1,4 +1,3 @@
-import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Modal from "@/modules/Modal";
@@ -17,40 +16,39 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-typescript";
-import React, { useContext } from "react";
+import React from "react";
 import Editor from "react-simple-code-editor";
 import { v4 as uuidv4 } from "uuid";
 
 const CodeEditorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { open, lang, code } = useAppSelector((state) => state.codeEditor);
-  const { currentUser } = useAppSelector((state) => state.auth);
-
-  const { data } = useContext(ChatContext);
+  const { authData, chatData } = useAppSelector((state) => state.user);
 
   const handleSend = async () => {
-    if (!currentUser?.uid || !data?.user?.uid) return;
+    if (!authData.currentUser?.uid || !chatData?.user?.uid || !chatData.chatId)
+      return;
 
     if (!code) return;
 
-    await addDoc(collection(db, "chats", data.chatId, "messages"), {
+    await addDoc(collection(db, "chats", chatData.chatId, "messages"), {
       id: uuidv4(),
       text: code,
       lang: lang,
-      senderId: currentUser.uid,
+      senderId: authData.currentUser.uid,
       date: Timestamp.now(),
     });
 
-    await updateDoc(doc(db, "userChats", currentUser.uid), {
-      [`${data.chatId}.lastMessage`]: "📋",
-      [`${data.chatId}.date`]: serverTimestamp(),
-      [`${data.chatId}.sender`]: "you",
+    await updateDoc(doc(db, "userChats", authData.currentUser.uid), {
+      [`${chatData.chatId}.lastMessage`]: "📋",
+      [`${chatData.chatId}.date`]: serverTimestamp(),
+      [`${chatData.chatId}.sender`]: "you",
     });
 
-    await updateDoc(doc(db, "userChats", data.user.uid), {
-      [`${data.chatId}.lastMessage`]: "📋",
-      [`${data.chatId}.date`]: serverTimestamp(),
-      [`${data.chatId}.sender`]: currentUser.displayName,
+    await updateDoc(doc(db, "userChats", chatData.user.uid), {
+      [`${chatData.chatId}.lastMessage`]: "📋",
+      [`${chatData.chatId}.date`]: serverTimestamp(),
+      [`${chatData.chatId}.sender`]: authData.currentUser.displayName,
     });
 
     dispatch(closeEditor());

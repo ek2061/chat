@@ -4,11 +4,11 @@ import {
   configureStore,
   ThunkAction,
 } from "@reduxjs/toolkit";
-import { authSlice } from "./auth.slice";
 import { codeEditorSlice } from "./codeEditor.slice";
+import { userSlice } from "./user.slice";
 
 const reducer = combineReducers({
-  auth: authSlice.reducer,
+  user: userSlice.reducer,
   codeEditor: codeEditorSlice.reducer,
 });
 

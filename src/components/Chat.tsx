@@ -1,14 +1,14 @@
-import { ChatContext } from "@/context/ChatContext";
+import { useAppSelector } from "@/hooks/useRedux";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
-import React, { useContext } from "react";
+import React from "react";
 import ChatroomTool from "./ChatroomTool";
 import Input from "./Input";
 import Messages from "./Messages";
 
 const Chat: React.FC = () => {
-  const { data } = useContext(ChatContext);
+  const { chatData } = useAppSelector((state) => state.user);
 
-  if (!data.user.uid)
+  if (!chatData.user.uid)
     return (
       <div className="flex w-full flex-1 flex-col items-center justify-center bg-gray-200 text-sidebar">
         <ChatBubbleLeftRightIcon className="w-4/5 max-w-[90px]" />

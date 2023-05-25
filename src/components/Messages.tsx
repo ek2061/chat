@@ -1,5 +1,5 @@
-import { ChatContext } from "@/context/ChatContext";
 import { db } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import {
   collection,
   onSnapshot,
@@ -7,7 +7,7 @@ import {
   query,
   Timestamp,
 } from "firebase/firestore";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Message from "./Message";
 
 interface messagesData {
@@ -19,15 +19,15 @@ interface messagesData {
 
 const Messages: React.FC = () => {
   const [messages, setMessages] = useState<messagesData[]>([]);
-  const { data } = useContext(ChatContext);
+  const { chatData } = useAppSelector((state) => state.user);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!data.chatId) return;
+    if (!chatData.chatId) return;
 
     const unsubscribe = onSnapshot(
       query(
-        collection(db, "chats", data.chatId, "messages"),
+        collection(db, "chats", chatData.chatId, "messages"),
         orderBy("date", "desc")
         // limit(10)
       ),
@@ -43,7 +43,7 @@ const Messages: React.FC = () => {
     return () => {
       unsubscribe();
     };
-  }, [data.chatId]);
+  }, [chatData.chatId]);
 
   const scrollEnd = () => {
     messagesEndRef.current?.scrollIntoView({
