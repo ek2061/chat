@@ -1,7 +1,7 @@
 import { useAppSelector } from "@/hooks/useRedux";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
 import React from "react";
-import ChatroomTool from "./ChatroomTool";
+import Chatbar from "./Chatbar";
 import Input from "./Input";
 import Messages from "./Messages";
 
@@ -20,7 +20,7 @@ const Chat: React.FC = () => {
 
   return (
     <div className="flex w-3/4 flex-1 flex-col sm:w-2/3">
-      <ChatroomTool />
+      <Chatbar />
       <Messages />
       <Input />
     </div>

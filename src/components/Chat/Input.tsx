@@ -1,3 +1,4 @@
+import CodeEditorModal from "@/components/CodeEditorModal";
 import { db, storage } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Preview from "@/modules/Preview";
@@ -15,7 +16,6 @@ import {
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CodeEditorModal from "./CodeEditorModal";
 
 const Input: React.FC = () => {
   const [text, setText] = useState<string>(""); // text of input box

@@ -1,5 +1,4 @@
 import UserImage from "@/assets/user.png";
-import MessageBox from "@/components/MessageBox";
 import { useAppSelector } from "@/hooks/useRedux";
 import Code from "@/modules/Code";
 import ImageViewer from "@/modules/ImageViewer";
@@ -7,6 +6,7 @@ import Skeleton from "@/modules/Skeleton";
 import { format } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
+import MessageBox from "./MessageBox";
 
 interface messagesData {
   date: Timestamp;

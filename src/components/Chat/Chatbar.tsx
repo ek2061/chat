@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/solid";
 import React from "react";
 
-const ChatroomTool: React.FC = () => {
+const Chatbar: React.FC = () => {
   const { chatData } = useAppSelector((state) => state.user);
 
   return (
@@ -21,4 +21,4 @@ const ChatroomTool: React.FC = () => {
   );
 };
 
-export default ChatroomTool;
+export default Chatbar;
