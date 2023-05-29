@@ -1,5 +1,4 @@
-import { AuthContext } from "@/context/AuthContext";
-import { ChatContext } from "@/context/ChatContext";
+import CodeEditorModal from "@/components/CodeEditorModal";
 import { db, storage } from "@/firebase";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Preview from "@/modules/Preview";
@@ -15,9 +14,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CodeEditorModal from "./CodeEditorModal";
 
 const Input: React.FC = () => {
   const [text, setText] = useState<string>(""); // text of input box
@@ -26,12 +24,11 @@ const Input: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const { open } = useAppSelector((state) => state.codeEditor);
-
-  const { currentUser } = useContext(AuthContext);
-  const { data } = useContext(ChatContext);
+  const { authData, chatData } = useAppSelector((state) => state.user);
 
   const handleSend = async () => {
-    if (!currentUser?.uid || !data?.user?.uid) return;
+    if (!authData.currentUser?.uid || !chatData?.user?.uid || !chatData.chatId)
+      return;
 
     if (img) {
       const storageRef = ref(storage, uuidv4());
@@ -46,36 +43,39 @@ const Input: React.FC = () => {
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          await addDoc(collection(db, "chats", data.chatId, "messages"), {
-            id: uuidv4(),
-            text,
-            senderId: currentUser.uid,
-            date: Timestamp.now(),
-            img: downloadURL,
-          });
+          await addDoc(
+            collection(db, "chats", chatData.chatId as string, "messages"),
+            {
+              id: uuidv4(),
+              text,
+              senderId: authData.currentUser?.uid as string,
+              date: Timestamp.now(),
+              img: downloadURL,
+            }
+          );
         }
       );
     } else {
       if (!text) return;
 
-      await addDoc(collection(db, "chats", data.chatId, "messages"), {
+      await addDoc(collection(db, "chats", chatData.chatId, "messages"), {
         id: uuidv4(),
         text,
-        senderId: currentUser.uid,
+        senderId: authData.currentUser.uid,
         date: Timestamp.now(),
       });
     }
 
-    await updateDoc(doc(db, "userChats", currentUser.uid), {
-      [`${data.chatId}.lastMessage`]: img ? "📷" : text,
-      [`${data.chatId}.date`]: serverTimestamp(),
-      [`${data.chatId}.sender`]: "you",
+    await updateDoc(doc(db, "userChats", authData.currentUser.uid), {
+      [`${chatData.chatId}.lastMessage`]: img ? "📷" : text,
+      [`${chatData.chatId}.date`]: serverTimestamp(),
+      [`${chatData.chatId}.sender`]: "you",
     });
 
-    await updateDoc(doc(db, "userChats", data.user.uid), {
-      [`${data.chatId}.lastMessage`]: img ? "📷" : text,
-      [`${data.chatId}.date`]: serverTimestamp(),
-      [`${data.chatId}.sender`]: currentUser.displayName,
+    await updateDoc(doc(db, "userChats", chatData.user.uid), {
+      [`${chatData.chatId}.lastMessage`]: img ? "📷" : text,
+      [`${chatData.chatId}.date`]: serverTimestamp(),
+      [`${chatData.chatId}.sender`]: authData.currentUser.displayName,
     });
 
     setText("");

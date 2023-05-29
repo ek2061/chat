@@ -1,7 +1,7 @@
-import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatsData } from "./type";
 import { UserItem } from "./UserItem";
 import { UserSkeleton } from "./UserSkeleton";
@@ -10,14 +10,14 @@ const UserChats: React.FC = () => {
   const [chats, setChats] = useState<ChatsData>({});
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { currentUser } = useContext(AuthContext);
+  const { authData } = useAppSelector((state) => state.user);
 
   useEffect(() => {
     const getChats = async () => {
-      if (!currentUser?.uid) return;
+      if (!authData.currentUser?.uid) return;
 
       const userChatsSnapshot = await getDoc(
-        doc(db, "userChats", currentUser.uid)
+        doc(db, "userChats", authData.currentUser.uid)
       );
 
       if (userChatsSnapshot.exists()) {
@@ -47,13 +47,13 @@ const UserChats: React.FC = () => {
       }
     };
 
-    if (currentUser?.uid) {
+    if (authData.currentUser?.uid) {
       getChats().catch((error) => {
         console.error("Error getting chats:", error);
       });
 
       const unsubscribe = onSnapshot(
-        doc(db, "userChats", currentUser.uid),
+        doc(db, "userChats", authData.currentUser.uid),
         () => {
           getChats().catch((error) => {
             console.error("Error getting chats:", error);
@@ -66,7 +66,7 @@ const UserChats: React.FC = () => {
         unsubscribe();
       };
     }
-  }, [currentUser?.uid]);
+  }, [authData.currentUser?.uid]);
 
   useEffect(() => {
     if (Object.keys(chats).length > 0) {
@@ -85,7 +85,7 @@ const UserChats: React.FC = () => {
         });
       }
     }
-  }, [chats, currentUser?.uid]);
+  }, [chats, authData.currentUser?.uid]);
 
   return (
     <>

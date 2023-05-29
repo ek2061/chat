@@ -1,6 +1,6 @@
 import UserImage from "@/assets/user.png";
-import { AuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase";
+import { useAppSelector } from "@/hooks/useRedux";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
@@ -13,7 +13,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
 interface UserData {
   displayName: string;
@@ -27,7 +27,7 @@ const Search: React.FC = () => {
   const [user, setUser] = useState<UserData[]>([]);
   const [error, setError] = useState<string>("");
 
-  const { currentUser } = useContext(AuthContext);
+  const { authData } = useAppSelector((state) => state.user);
 
   const handleSearch = async () => {
     if (!username) return;
@@ -63,11 +63,11 @@ const Search: React.FC = () => {
 
   const handleSelect = async (u: UserData) => {
     // check whether the group (chats in firestore) exists, if not create
-    if (currentUser && user) {
+    if (authData.currentUser && user) {
       const combinedId =
-        currentUser.uid > u.uid
-          ? currentUser.uid + u.uid
-          : u.uid + currentUser.uid;
+        authData.currentUser.uid > u.uid
+          ? authData.currentUser.uid + u.uid
+          : u.uid + authData.currentUser.uid;
 
       try {
         const res = await getDocs(
@@ -80,7 +80,7 @@ const Search: React.FC = () => {
 
           // create user chats
           await setDoc(
-            doc(db, "userChats", currentUser.uid),
+            doc(db, "userChats", authData.currentUser.uid),
             {
               [combinedId]: {
                 userInfo: doc(db, "users", u.uid),
@@ -95,7 +95,7 @@ const Search: React.FC = () => {
             doc(db, "userChats", u.uid),
             {
               [combinedId]: {
-                userInfo: doc(db, "users", currentUser.uid),
+                userInfo: doc(db, "users", authData.currentUser.uid),
                 date: serverTimestamp(),
                 lastMessage: "",
               },
@@ -112,15 +112,18 @@ const Search: React.FC = () => {
   };
 
   return (
-    <div className="border-0 border-b-2 border-solid text-gray-500">
+    <div className="relative border-0 border-b-2 border-solid text-gray-500">
       <div className="flex items-center space-x-2 p-2.5">
-        <MagnifyingGlassIcon className="h-4 w-4 text-gray-200" />
         <input
-          className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400"
+          className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400 max-sm:w-32"
           type="text"
           placeholder="find a user by Enter"
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
+        />
+        <MagnifyingGlassIcon
+          className="absolute right-5 h-6 w-6 cursor-pointer rounded-md p-0.5 text-gray-200 hover:bg-blue-400"
+          onClick={handleSearch}
         />
       </div>
       {error && (

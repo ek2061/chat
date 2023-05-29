@@ -1,18 +1,21 @@
 import UserImage from "@/assets/user.png";
-import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { toggleSidebar } from "@/store/app.slice";
 import {
   ArrowRightOnRectangleIcon,
+  Bars3Icon,
   CameraIcon,
 } from "@heroicons/react/24/solid";
-import { User, signOut, updateProfile } from "firebase/auth";
+import { signOut, updateProfile, User } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
-  const { currentUser } = useContext(AuthContext);
+  const dispatch = useAppDispatch();
+  const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
 
@@ -21,10 +24,13 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!img || !currentUser?.uid || !auth.currentUser) return;
+    if (!img || !authData.currentUser?.uid || !auth.currentUser) return;
 
     const handleUpload = async () => {
-      const storageRef = ref(storage, `avatar/${currentUser.uid}`);
+      const storageRef = ref(
+        storage,
+        `avatar/${authData.currentUser?.uid as string}`
+      );
 
       const uploadTask = uploadBytesResumable(storageRef, img as Blob);
 
@@ -45,9 +51,12 @@ const Navbar: React.FC = () => {
                 await updateProfile(auth.currentUser as User, {
                   photoURL: downloadURL,
                 });
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                  photoURL: downloadURL,
-                });
+                await updateDoc(
+                  doc(db, "users", authData.currentUser?.uid as string),
+                  {
+                    photoURL: downloadURL,
+                  }
+                );
 
                 resolve(downloadURL);
               }
@@ -68,16 +77,22 @@ const Navbar: React.FC = () => {
     };
 
     handleUpload();
-  }, [img, currentUser]);
+  }, [img, authData.currentUser]);
 
   return (
     <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100">
-      <span className="text-2xl font-bold">Chat</span>
+      <span className="flex items-center space-x-3">
+        <Bars3Icon
+          className="h-6 w-6 cursor-pointer sm:hidden"
+          onClick={() => dispatch(toggleSidebar())}
+        />
+        <p className="select-none text-2xl font-bold">Chat</p>
+      </span>
       <div className="flex gap-2.5">
         <div className="relative">
           <img
-            className="h-10 w-10 rounded-full bg-gray-100 object-cover"
-            src={currentUser?.photoURL ?? UserImage}
+            className="h-10 w-10 select-none rounded-full bg-gray-100 object-cover"
+            src={authData.currentUser?.photoURL ?? UserImage}
             alt="user-avatar"
           />
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-full bg-gray-700 opacity-0 transition-opacity duration-300 hover:opacity-75">
@@ -98,7 +113,7 @@ const Navbar: React.FC = () => {
         </div>
 
         <span className="flex items-center text-lg">
-          {currentUser?.displayName}
+          {authData.currentUser?.displayName}
         </span>
         <button
           className="flex cursor-pointer items-center space-x-2 rounded-md border-none bg-gray-500 text-sm text-gray-100"

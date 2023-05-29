@@ -1,6 +1,6 @@
-import { AuthContext } from "@/context/AuthContext";
 import { auth, db, storage } from "@/firebase";
 import withPageLayout from "@/hoc/withPageLayout";
+import { useAppSelector } from "@/hooks/useRedux";
 import Preview from "@/modules/Preview";
 import { blob2base64 } from "@/utils/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
@@ -14,11 +14,11 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register: React.FC = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
   const [preview, setPreview] = useState<string>(""); // selected image preview
@@ -40,7 +40,7 @@ const Register: React.FC = () => {
   }, [img]);
 
   /* redirect to home page if logged in */
-  if (currentUser?.emailVerified) {
+  if (authData.currentUser?.emailVerified) {
     return <Navigate to="/" />;
   }
 
