@@ -1,8 +1,10 @@
 import UserImage from "@/assets/user.png";
 import { auth, db, storage } from "@/firebase";
-import { useAppSelector } from "@/hooks/useRedux";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { toggleSidebar } from "@/store/app.slice";
 import {
   ArrowRightOnRectangleIcon,
+  Bars3Icon,
   CameraIcon,
 } from "@heroicons/react/24/solid";
 import { signOut, updateProfile, User } from "firebase/auth";
@@ -12,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
@@ -78,11 +81,17 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100">
-      <span className="text-2xl font-bold">Chat</span>
+      <span className="flex items-center space-x-3">
+        <Bars3Icon
+          className="h-6 w-6 cursor-pointer sm:hidden"
+          onClick={() => dispatch(toggleSidebar())}
+        />
+        <p className="select-none text-2xl font-bold">Chat</p>
+      </span>
       <div className="flex gap-2.5">
         <div className="relative">
           <img
-            className="h-10 w-10 rounded-full bg-gray-100 object-cover"
+            className="h-10 w-10 select-none rounded-full bg-gray-100 object-cover"
             src={authData.currentUser?.photoURL ?? UserImage}
             alt="user-avatar"
           />

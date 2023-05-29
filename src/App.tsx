@@ -10,6 +10,7 @@ import { FallbackProvider } from "./context/FallbackContext";
 import { auth } from "./firebase";
 import { useAppDispatch } from "./hooks/useRedux";
 import { routes } from "./routes";
+import { setWindowWidth } from "./store/app.slice";
 import { setCurrentUser, setLoading } from "./store/user.slice";
 
 const App: React.FC = () => {
@@ -28,6 +29,18 @@ const App: React.FC = () => {
     });
 
     return unsubscribe;
+  }, [dispatch]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      dispatch(setWindowWidth(window.innerWidth));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [dispatch]);
 
   return (

@@ -1,6 +1,6 @@
+import Search from "@/components/Search";
+import UserChats from "@/components/UserChats";
 import React from "react";
-import Search from "./Search";
-import UserChats from "./UserChats";
 
 const Sidebar: React.FC = () => {
   return (
