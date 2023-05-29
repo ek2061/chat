@@ -112,15 +112,18 @@ const Search: React.FC = () => {
   };
 
   return (
-    <div className="border-0 border-b-2 border-solid text-gray-500">
+    <div className="relative border-0 border-b-2 border-solid text-gray-500">
       <div className="flex items-center space-x-2 p-2.5">
-        <MagnifyingGlassIcon className="h-4 w-4 text-gray-200" />
         <input
-          className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400"
+          className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400 max-sm:w-32"
           type="text"
           placeholder="find a user by Enter"
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
+        />
+        <MagnifyingGlassIcon
+          className="absolute right-5 h-6 w-6 cursor-pointer rounded-md p-0.5 text-gray-200 hover:bg-blue-400"
+          onClick={handleSearch}
         />
       </div>
       {error && (
