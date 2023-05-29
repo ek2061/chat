@@ -53,6 +53,11 @@ VITE_appId=
 ![UploadComplete](./md_images/UploadComplete.PNG)  
 ![RefetchAvatar](./md_images/RefetchAvatar.PNG)
 
+### 聊天訊息即時通知
+
+![OpenNotification](./md_images/OpenNotification.PNG)
+![ChatNotification](./md_images/ChatNotification.PNG)
+
 ## Todo
 
 - 透過無限滾動(infinite scrolling)取得舊的聊天記錄，避免初次載入過多聊天訊息
