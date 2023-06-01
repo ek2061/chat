@@ -1,0 +1,23 @@
+{
+  "findUsers": "透過Enter搜尋使用者",
+  "findUsersRes": "找到 {{count}} 個使用者",
+  "yourfriends": "你的朋友",
+  "findOrSelectFriends": "尋找或選擇你的朋友並開始聊天吧!",
+  "typeSomething": "在這裡輸入點什麼吧",
+  "send": "送出",
+  "displayName": "顯示名稱",
+  "email": "信箱",
+  "password": "密碼",
+  "addAvatar": "可以在這裡加入頭像",
+  "signup": "註冊",
+  "login": "登入",
+  "logout": "登出",
+  "haveAccount": "你已經有帳戶了?",
+  "donothaveAccount": "你沒有帳戶嗎?",
+  "uploadAvatar": "頭像上傳中...",
+  "uploadAvatarSuccess": "頭像上傳成功，請刷新頁面查看更新",
+  "uploadAvatarError": "頭像上傳失敗，請稍後再試",
+  "addCode": "附上你的程式碼",
+  "codeLang": "程式語言",
+  "pasteCodeHere": "在這裡貼上你的程式碼"
+}

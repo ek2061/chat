@@ -11,6 +11,7 @@ import { signOut, updateProfile, User } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 const Navbar: React.FC = () => {
@@ -18,6 +19,8 @@ const Navbar: React.FC = () => {
   const { authData } = useAppSelector((state) => state.user);
 
   const [img, setImg] = useState<File | null>(null); // selected image file
+
+  const { t } = useTranslation();
 
   const handleUploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setImg(e.target.files?.[0] || null);
@@ -63,9 +66,9 @@ const Navbar: React.FC = () => {
             );
           }),
           {
-            pending: "Avatar uploading...",
-            success: "Avatar upload successful. Please refresh page.",
-            error: "Avatar upload failed. Please try again later.",
+            pending: t("uploadAvatar") ?? "uploading",
+            success: t("uploadAvatarSuccess") ?? "success",
+            error: t("uploadAvatarError") ?? "error",
           },
           {
             autoClose: 8000,
@@ -77,7 +80,7 @@ const Navbar: React.FC = () => {
     };
 
     handleUpload();
-  }, [img, authData.currentUser]);
+  }, [img, authData.currentUser, t]);
 
   return (
     <div className="flex h-16 items-center justify-between bg-navbar p-2.5 text-gray-100">
@@ -120,7 +123,7 @@ const Navbar: React.FC = () => {
           onClick={() => signOut(auth)}
         >
           <ArrowRightOnRectangleIcon className="h-6 w-6" />
-          <span className="max-sm:hidden">logout</span>
+          <span className="max-sm:hidden">{t("logout")}</span>
         </button>
       </div>
     </div>

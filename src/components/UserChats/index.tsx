@@ -2,6 +2,7 @@ import { db } from "@/firebase";
 import { useAppSelector } from "@/hooks/useRedux";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChatsData } from "./type";
 import { UserItem } from "./UserItem";
 import { UserSkeleton } from "./UserSkeleton";
@@ -11,6 +12,8 @@ const UserChats: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const { authData } = useAppSelector((state) => state.user);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getChats = async () => {
@@ -90,7 +93,7 @@ const UserChats: React.FC = () => {
   return (
     <>
       <p className="px-3 py-2 text-lg text-white">
-        your friends ({Object.keys(chats).length})
+        {t("yourfriends")} ({Object.keys(chats).length})
       </p>
       <div className="overflow-y-auto">
         {loading && [1, 2, 3].map((n) => <UserSkeleton key={n} />)}

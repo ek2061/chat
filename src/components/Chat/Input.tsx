@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 
 const Input: React.FC = () => {
@@ -25,6 +26,8 @@ const Input: React.FC = () => {
   const dispatch = useAppDispatch();
   const { open } = useAppSelector((state) => state.codeEditor);
   const { authData, chatData } = useAppSelector((state) => state.user);
+
+  const { t } = useTranslation();
 
   const handleSend = async () => {
     if (!authData.currentUser?.uid || !chatData?.user?.uid || !chatData.chatId)
@@ -131,7 +134,7 @@ const Input: React.FC = () => {
         <input
           className="w-full border-none text-lg text-navbar outline-none placeholder:text-gray-400"
           type="text"
-          placeholder="type something here..."
+          placeholder={t("typeSomething") as string}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKey}
           onPaste={handlePaste}
@@ -155,10 +158,10 @@ const Input: React.FC = () => {
             <PhotoIcon className="h-6 cursor-pointer" />
           </label>
           <button
-            className="cursor-pointer rounded-lg border-none bg-blue-500 px-4 py-2.5 text-white hover:bg-blue-600"
+            className="flex h-9 w-16 cursor-pointer items-center justify-center rounded-lg border-none bg-blue-500 px-4 py-2.5 text-white hover:bg-blue-600"
             onClick={handleSend}
           >
-            Send
+            {t("send")}
           </button>
         </div>
       </div>

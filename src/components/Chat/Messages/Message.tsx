@@ -67,6 +67,7 @@ const Message: React.FC<MessageProps> = ({ message, scrollEnd }) => {
         )}
         {message.img && (
           <>
+            <span className="text-xs text-gray-500">{localDateString}</span>
             {loading && <Skeleton />}
             <img
               className={`${
