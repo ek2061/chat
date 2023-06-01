@@ -7,11 +7,14 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,24 +55,24 @@ const Login: React.FC = () => {
     <div className="flex h-screen items-center justify-center bg-sky-500">
       <div className="px-15 flex w-full max-w-md flex-col items-center gap-2.5 rounded-lg bg-white py-5">
         <span className="text-2xl font-bold text-gray-600">Chat</span>
-        <span className="text-lg text-gray-600">Login</span>
+        <span className="text-lg text-gray-600">{t("login")}</span>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             className="w-64 rounded-lg border-2 border-solid border-gray-200 p-2 outline-none placeholder:text-gray-400 focus:border-blue-300"
             required
             type="email"
             name="email"
-            placeholder="email"
+            placeholder={t("email") as string}
           />
           <input
             className="w-64 rounded-lg border-2 border-solid border-gray-200 p-2 outline-none placeholder:text-gray-400 focus:border-blue-300"
             required
             type="password"
             name="password"
-            placeholder="password"
+            placeholder={t("password") as string}
           />
           <button className="cursor-pointer rounded-md border-none bg-blue-400  p-2.5 font-bold text-white hover:bg-blue-500">
-            Sign in
+            {t("login")}
           </button>
           {error && (
             <span className="w-64 text-center text-sm font-semibold text-red-500">
@@ -78,7 +81,7 @@ const Login: React.FC = () => {
           )}
         </form>
         <p className="mt-2.5 text-xs text-gray-500">
-          You don't have an account? <Link to="/register">Register</Link>
+          {t("donothaveAccount")} <Link to="/register">{t("signup")}</Link>
         </p>
       </div>
     </div>

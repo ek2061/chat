@@ -58,6 +58,10 @@ VITE_appId=
 ![OpenNotification](./md_images/OpenNotification.PNG)
 ![ChatNotification](./md_images/ChatNotification.PNG)
 
+### 多國語言
+
+依照瀏覽器語言選擇繁體中文或英文(預設)
+
 ## Todo
 
 - 透過無限滾動(infinite scrolling)取得舊的聊天記錄，避免初次載入過多聊天訊息

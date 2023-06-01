@@ -15,6 +15,7 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 const Register: React.FC = () => {
@@ -24,6 +25,8 @@ const Register: React.FC = () => {
   const [preview, setPreview] = useState<string>(""); // selected image preview
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!img) {
@@ -119,28 +122,28 @@ const Register: React.FC = () => {
     <div className="flex h-screen items-center justify-center bg-sky-500">
       <div className="px-15 flex w-full max-w-md flex-col items-center gap-2.5 rounded-lg bg-white py-5">
         <span className="text-2xl font-bold text-gray-600">Chat</span>
-        <span className="text-lg text-gray-600">Register</span>
+        <span className="text-lg text-gray-600">{t("signup")}</span>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             className="w-64 rounded-lg border-2 border-solid border-gray-200 p-2 outline-none placeholder:text-gray-400 focus:border-blue-300"
             required
             type="text"
             name="displayName"
-            placeholder="display name"
+            placeholder={t("displayName") as string}
           />
           <input
             className="w-64 rounded-lg border-2 border-solid border-gray-200 p-2 outline-none placeholder:text-gray-400 focus:border-blue-300"
             required
             type="email"
             name="email"
-            placeholder="email"
+            placeholder={t("email") as string}
           />
           <input
             className="w-64 rounded-lg border-2 border-solid border-gray-200 p-2 outline-none placeholder:text-gray-400 focus:border-blue-300"
             required
             type="password"
             name="password"
-            placeholder="password"
+            placeholder={t("password") as string}
           />
           <input
             type="file"
@@ -155,13 +158,13 @@ const Register: React.FC = () => {
             htmlFor="avatar"
           >
             <UserCircleIcon className="h-6 w-6" />
-            <span>Add an avatar if you want</span>
+            <span>{t("addAvatar")}</span>
           </label>
 
           {preview && <Preview src={preview} onClose={() => setImg(null)} />}
 
           <button className="cursor-pointer rounded-md border-none bg-blue-400  p-2.5 font-bold text-white hover:bg-blue-500">
-            Sign up
+            {t("signup")}
           </button>
           {error && (
             <span className="w-64 text-center text-sm font-semibold text-red-500">
@@ -170,7 +173,7 @@ const Register: React.FC = () => {
           )}
         </form>
         <p className="mt-2.5 text-xs text-gray-500">
-          You do have an account? <Link to="/login">Login</Link>
+          {t("haveAccount")} <Link to="/login">{t("login")}</Link>
         </p>
       </div>
     </div>

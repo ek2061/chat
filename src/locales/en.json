@@ -1,0 +1,23 @@
+{
+  "findUsers": "find a user by Enter",
+  "findUsersRes": "found {{count}} users",
+  "yourfriends": "your friends",
+  "findOrSelectFriends": "Find or select your friends and start chatting!",
+  "typeSomething": "type something here...",
+  "send": "send",
+  "displayName": "displayName",
+  "email": "email",
+  "password": "password",
+  "addAvatar": "Add an avatar if you want",
+  "signup": "Sign up",
+  "login": "Login",
+  "logout": "logout",
+  "haveAccount": "You do have an account?",
+  "donothaveAccount": "You don't have an account?",
+  "uploadAvatar": "Avatar uploading...",
+  "uploadAvatarSuccess": "Avatar upload successful. Please refresh page.",
+  "uploadAvatarError": "Avatar upload failed. Please try again later.",
+  "addCode": "add your code",
+  "codeLang": "Language",
+  "pasteCodeHere": "paste your code here"
+}

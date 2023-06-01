@@ -14,6 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface UserData {
   displayName: string;
@@ -28,6 +29,8 @@ const Search: React.FC = () => {
   const [error, setError] = useState<string>("");
 
   const { authData } = useAppSelector((state) => state.user);
+
+  const { t } = useTranslation();
 
   const handleSearch = async () => {
     if (!username) return;
@@ -117,7 +120,7 @@ const Search: React.FC = () => {
         <input
           className="border-none bg-transparent text-white outline-none placeholder:text-base placeholder:text-gray-400 max-sm:w-32"
           type="text"
-          placeholder="find a user by Enter"
+          placeholder={t("findUsers") as string}
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -133,7 +136,7 @@ const Search: React.FC = () => {
       {user.length > 0 && (
         <div>
           <div className="flex items-center justify-between pr-6">
-            <p className="px-3">found {user.length} users</p>
+            <p className="px-3">{t("findUsersRes", { count: user.length })}</p>
             <XMarkIcon
               className="h-5 w-5 text-white hover:text-gray-400"
               onClick={() => setUser([])}

@@ -17,6 +17,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-python";
 import "prismjs/components/prism-typescript";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Editor from "react-simple-code-editor";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,6 +25,8 @@ const CodeEditorModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const { open, lang, code } = useAppSelector((state) => state.codeEditor);
   const { authData, chatData } = useAppSelector((state) => state.user);
+
+  const { t } = useTranslation();
 
   const handleSend = async () => {
     if (!authData.currentUser?.uid || !chatData?.user?.uid || !chatData.chatId)
@@ -73,19 +76,19 @@ const CodeEditorModal: React.FC = () => {
     <Modal
       open={open}
       onClose={() => dispatch(closeEditor())}
-      title="add your code"
+      title={t("addCode") as string}
       action={
         <button
           className="cursor-pointer rounded-md border-none bg-blue-500 px-4 py-2.5 text-white hover:bg-blue-600"
           onClick={handleSend}
         >
-          Send
+          {t("send")}
         </button>
       }
     >
       <div className="space-y-2">
         <div className="flex space-x-2 px-3">
-          <p className="text-sm">Language: </p>
+          <p className="text-sm">{t("codeLang")}: </p>
           <select
             className="h-6 w-28 rounded-sm border-none"
             name="language"
@@ -106,7 +109,7 @@ const CodeEditorModal: React.FC = () => {
             highlight={funcHighlight}
             className="min-h-[240px] bg-gray-900 text-sm text-gray-100"
             padding={10}
-            placeholder="paste your code here..."
+            placeholder={t("pasteCodeHere") as string}
           />
         </div>
       </div>
